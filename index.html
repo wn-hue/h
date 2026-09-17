@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>오늘근무 - 교대 캘린더 & 급여 계산기</title>
+    <title>코써 근무 - 교대 캘린더 & 급여 계산기</title>
 
     <!-- iOS Safari & Android 홈 화면 추가 (단독 PWA 앱 규격) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="오늘근무">
+    <meta name="apple-mobile-web-app-title" content="코써 근무">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#2563eb">
 
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232563eb'/><text x='50%' y='68%' font-size='46' font-weight='900' fill='white' text-anchor='middle'>근무</text></svg>">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232563eb'/><text x='50%' y='68%' font-size='46' font-weight='900' fill='white' text-anchor='middle'>근무</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232563eb'/><text x='50%' y='68%' font-size='44' font-weight='900' fill='white' text-anchor='middle'>코써</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232563eb'/><text x='50%' y='68%' font-size='44' font-weight='900' fill='white' text-anchor='middle'>코써</text></svg>">
 
     <style>
         :root {
@@ -81,7 +81,7 @@
             border-radius: 9px;
             color: white;
             font-weight: 900;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -230,7 +230,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(15, 118, 110, 0.15);
+            box-shadow: 0 2px 4px rgba(15, 118, 10, 0.15);
             cursor: pointer;
         }
 
@@ -689,8 +689,8 @@
         <!-- 상단 헤더 -->
         <div class="app-header">
             <div class="brand-box">
-                <div class="brand-logo">근무</div>
-                <div class="brand-title">오늘근무</div>
+                <div class="brand-logo">코써</div>
+                <div class="brand-title">코써 근무</div>
             </div>
             <div class="group-selector-wrap">
                 <button class="group-btn" id="btn-grp-A" onclick="setGroup('A')">A조</button>
@@ -765,7 +765,6 @@
                 <button class="nav-btn" onclick="changePayMonth(1)">▶</button>
             </div>
 
-            <!-- 세전 총지급액 / 급여 / 상여금 중심의 히어로 카드 -->
             <div class="salary-hero">
                 <div class="period-tag" id="pay-period-label">산정기간: 2026-08-16 ~ 2026-09-15</div>
                 <div class="hero-label">총 지급액 (세전 합계)</div>
@@ -1033,7 +1032,7 @@
     </div>
 
     <script>
-        const BASE_DATE = new Date(2026, 8, 9); // 2026-09-09
+        const BASE_DATE = new Date(2026, 8, 9);
         const GROUP_OFFSETS = { 'C': 0, 'B': 4, 'A': 8 };
 
         const SHUTDOWN_DAYS = new Set([
@@ -1593,7 +1592,6 @@
             calculatePayrollFromInputs();
         }
 
-        // 급여 및 상여 계산 엔진 (공제 추정치 제외)
         function calculatePayrollFromInputs() {
             const E2 = parseFloat(document.getElementById('inp-day-days').value) || 0;
             const E3 = parseFloat(document.getElementById('inp-night-days').value) || 0;
@@ -1644,12 +1642,10 @@
 
             const grandGross = regularGross + bonusPay;
 
-            // 상단 히어로 카드 갱신 (세전 총지급액 / 기본 수당 급여 / 상여금)
             document.getElementById('hero-gross-pay').innerText = `${fmt(grandGross)} 원`;
             document.getElementById('hero-regular-pay').innerText = `${fmt(regularGross)} 원`;
             document.getElementById('hero-bonus-pay').innerText = `${fmt(bonusPay)} 원`;
 
-            // 지급 상세 내역 테이블 갱신
             document.getElementById('row-base-pay').innerText = fmt(basicPay);
             document.getElementById('row-duty-pay').innerText = fmt(dutyPay);
             document.getElementById('row-seniority-pay').innerText = fmt(seniorityPay);
