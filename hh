@@ -765,18 +765,19 @@
                 <button class="nav-btn" onclick="changePayMonth(1)">▶</button>
             </div>
 
+            <!-- 세전 총지급액 / 급여 / 상여금 중심의 히어로 카드 -->
             <div class="salary-hero">
                 <div class="period-tag" id="pay-period-label">산정기간: 2026-08-16 ~ 2026-09-15</div>
-                <div class="hero-label">차감지급액 (실수령액)</div>
-                <div class="hero-amount" id="hero-net-pay">0 원</div>
+                <div class="hero-label">총 지급액 (세전 합계)</div>
+                <div class="hero-amount" id="hero-gross-pay">0 원</div>
                 <div class="hero-subgrid">
                     <div>
-                        <div class="hero-label">급여 + 상여금 총액</div>
-                        <div class="sub-val" id="hero-gross-pay">0 원</div>
+                        <div class="hero-label">월 급여 (수당 포함)</div>
+                        <div class="sub-val" id="hero-regular-pay" style="color: #38bdf8;">0 원</div>
                     </div>
                     <div>
-                        <div class="hero-label">공제 총액 (보험+세금)</div>
-                        <div class="sub-val" id="hero-deduct-pay" style="color: #fca5a5;">0 원</div>
+                        <div class="hero-label">상여금 (지급월 대상)</div>
+                        <div class="sub-val" id="hero-bonus-pay" style="color: #c084fc;">0 원</div>
                     </div>
                 </div>
             </div>
@@ -845,7 +846,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <span>2. 지급 상세 내역</span>
+                    <span>2. 지급 상세 내역 (세전)</span>
                     <span id="bonus-badge" style="font-size: 11px; padding: 2px 6px; border-radius: 4px; background: #faf5ff; color: #7c3aed; font-weight: 800;">짝수달 상여</span>
                 </div>
                 <table class="pay-table">
@@ -867,25 +868,7 @@
                             <td class="num" id="row-other-pay" style="color:#b45309; font-weight:800;">0</td>
                         </tr>
                         <tr class="bonus-row"><td>상여금 (기본급 50% + 근속수당)</td><td class="num" id="row-bonus-pay">0</td></tr>
-                        <tr class="total-row"><td>소득총액 (세전 ⓐ)</td><td class="num" id="row-gross-pay" style="color:var(--primary);">0</td></tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <span>3. 공제 상세 내역</span>
-                    <span style="font-size: 11px; color: var(--text-sub);">2026년 법정요율</span>
-                </div>
-                <table class="pay-table">
-                    <tbody>
-                        <tr><td>국민연금 (4.5%)</td><td class="num" id="row-nps">0</td></tr>
-                        <tr><td>건강보험 (3.545%)</td><td class="num" id="row-nhi">0</td></tr>
-                        <tr><td>장기요양보험 (건강의 12.95%)</td><td class="num" id="row-ltc">0</td></tr>
-                        <tr><td>고용보험 (0.90%)</td><td class="num" id="row-ei">0</td></tr>
-                        <tr><td>근로소득세 (간이세액 추산)</td><td class="num" id="row-tax">0</td></tr>
-                        <tr><td>지방소득세 (소득세의 10%)</td><td class="num" id="row-localtax">0</td></tr>
-                        <tr class="total-row"><td>공제 합계 (ⓑ)</td><td class="num" id="row-deduct-total" style="color:#dc2626;">0</td></tr>
+                        <tr class="total-row"><td>총 지급액 (세전)</td><td class="num" id="row-gross-pay" style="color:var(--primary); font-size:14px;">0</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -1007,7 +990,6 @@
                 <button style="border: none; background: none; font-size: 16px; color: #94a3b8; cursor: pointer;" onclick="closeModalDirect()">✕</button>
             </div>
             
-            <!-- 스케줄러 메모 입력 영역 -->
             <div style="margin-bottom: 14px;">
                 <label style="display:block; font-size:12px; font-weight:800; color:#334155; margin-bottom:4px;">📝 일자별 메모 (스케줄러 기능)</label>
                 <textarea id="modal-memo-input" placeholder="예: 설비 점검, 연차 신청, 특근 신청 등 메모 입력..." oninput="onMemoInputChange()"></textarea>
@@ -1221,7 +1203,6 @@
             return { ...base, hasOt: true, isHoliday: !!holiday, holidayName: holiday ? holiday.name : '' };
         }
 
-        // --- 캘린더 렌더링 (메모 표시 포함) ---
         function renderCalendar() {
             const year = currentCalDate.getFullYear();
             const month = currentCalDate.getMonth();
@@ -1280,7 +1261,6 @@
                 let holHtml = shift.holidayName ? `<div class="holiday-name">${shift.holidayName}</div>` : '';
                 let subHtml = shift.subName ? `<div class="sub-tag">${shift.subName}</div>` : '';
                 
-                // 메모 태그 표시
                 let memoHtml = '';
                 if (dayMemos[dateStr]) {
                     memoHtml = `<div class="memo-tag">📝 ${dayMemos[dateStr]}</div>`;
@@ -1351,7 +1331,6 @@
             syncFromCalendar();
         }
 
-        // --- 회계연도 기준 연차 자동 계산 엔진 (이미지 4 정산 공식) ---
         function calculateFiscalYearLeave(hireDateStr, targetYear) {
             if (!targetYear) targetYear = 2026;
             if (!hireDateStr) return { leave: 0, desc: "입사년월일을 입력하시면 회계일 기준 연차가 자동 계산됩니다.", isPre2017: false };
@@ -1368,7 +1347,7 @@
                 return { leave: 0, desc: `입사일(${hireDateStr})이 ${targetYear}년 1월 1일 이후입니다.`, isPre2017: false };
             }
 
-            const reformDate = new Date(2017, 4, 29); // 2017-05-29
+            const reformDate = new Date(2017, 4, 29);
             const isPreReform = (hireDate < reformDate);
             const tenureYears = targetYear - hy;
             let leaveDays = 0;
@@ -1380,7 +1359,6 @@
                 const reformTag = isPreReform ? "2017.05.29 이전 입사 (기타소급 대상)" : "2017.05.29 이후 입사";
                 desc = `회계연도 기준 1년차 정산: 전년도 ${monthsWorked}개월 근무 비례연차 ${leaveDays}일 [${reformTag}]`;
             } else {
-                // 이미지 4 회계일 기준 정기부여: 3년차부터 매 2년마다 +1일 가산 (2015년 입사 -> 2026년 기준 19일 일치)
                 let added = Math.max(0, Math.floor((tenureYears - 3) / 2));
                 leaveDays = Math.min(25, 15 + added);
                 const reformTag = isPreReform ? "2017.05.29 이전 입사 (기타소급 대상)" : "2017.05.29 이후 입사";
@@ -1469,7 +1447,6 @@
             alert("💾 모든 입력값과 설정이 안전하게 저장되었습니다!");
         }
 
-        // --- 근태 및 메모 모달 시트 ---
         function openOverrideModal(dateStr, dateObj, currentShift) {
             selectedDateStr = dateStr;
             const weekNames = ['일', '월', '화', '수', '목', '금', '토'];
@@ -1478,9 +1455,7 @@
             const base = getBaseShift(dateObj, currentGroup);
             document.getElementById('modal-orig-text').innerText = `[기본: ${base.name}${currentShift.holidayName ? ' · ' + currentShift.holidayName : ''}]`;
             
-            // 기존 메모 불러오기
             document.getElementById('modal-memo-input').value = dayMemos[dateStr] || '';
-
             document.getElementById('modal-override').classList.add('active');
         }
 
@@ -1556,7 +1531,6 @@
             }
         }
 
-        // 월급 계산기
         function changePayMonth(delta) {
             currentPayDate.setMonth(currentPayDate.getMonth() + delta);
             syncFromCalendar();
@@ -1619,6 +1593,7 @@
             calculatePayrollFromInputs();
         }
 
+        // 급여 및 상여 계산 엔진 (공제 추정치 제외)
         function calculatePayrollFromInputs() {
             const E2 = parseFloat(document.getElementById('inp-day-days').value) || 0;
             const E3 = parseFloat(document.getElementById('inp-night-days').value) || 0;
@@ -1669,28 +1644,12 @@
 
             const grandGross = regularGross + bonusPay;
 
-            const npsBase = Math.min(grandGross, 6170000);
-            const nps = Math.floor((npsBase * 0.045) / 10) * 10;
-            const nhi = Math.floor((grandGross * 0.03545) / 10) * 10;
-            const ltc = Math.floor((nhi * 0.1295) / 10) * 10;
-            const ei = Math.floor((grandGross * 0.009) / 10) * 10;
-
-            let tax = 0;
-            if (grandGross <= 1060000) tax = 0;
-            else if (grandGross <= 3000000) tax = grandGross * 0.03;
-            else if (grandGross <= 5000000) tax = 90000 + (grandGross - 3000000) * 0.08;
-            else if (grandGross <= 7000000) tax = 250000 + (grandGross - 5000000) * 0.14;
-            else tax = 530000 + (grandGross - 7000000) * 0.18;
-
-            tax = Math.floor(tax / 10) * 10;
-            const localTax = Math.floor((tax * 0.1) / 10) * 10;
-            const deductTotal = nps + nhi + ltc + ei + tax + localTax;
-            const netPay = grandGross - deductTotal;
-
-            document.getElementById('hero-net-pay').innerText = `${fmt(netPay)} 원`;
+            // 상단 히어로 카드 갱신 (세전 총지급액 / 기본 수당 급여 / 상여금)
             document.getElementById('hero-gross-pay').innerText = `${fmt(grandGross)} 원`;
-            document.getElementById('hero-deduct-pay').innerText = `-${fmt(deductTotal)} 원`;
+            document.getElementById('hero-regular-pay').innerText = `${fmt(regularGross)} 원`;
+            document.getElementById('hero-bonus-pay').innerText = `${fmt(bonusPay)} 원`;
 
+            // 지급 상세 내역 테이블 갱신
             document.getElementById('row-base-pay').innerText = fmt(basicPay);
             document.getElementById('row-duty-pay').innerText = fmt(dutyPay);
             document.getElementById('row-seniority-pay').innerText = fmt(seniorityPay);
@@ -1703,14 +1662,6 @@
             document.getElementById('row-other-pay').innerText = fmt(otherPay);
             document.getElementById('row-bonus-pay').innerText = fmt(bonusPay);
             document.getElementById('row-gross-pay').innerText = fmt(grandGross);
-
-            document.getElementById('row-nps').innerText = fmt(nps);
-            document.getElementById('row-nhi').innerText = fmt(nhi);
-            document.getElementById('row-ltc').innerText = fmt(ltc);
-            document.getElementById('row-ei').innerText = fmt(ei);
-            document.getElementById('row-tax').innerText = fmt(tax);
-            document.getElementById('row-localtax').innerText = fmt(localTax);
-            document.getElementById('row-deduct-total').innerText = fmt(deductTotal);
         }
 
         function loadConfig() {
