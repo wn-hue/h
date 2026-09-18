@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>코써 근무 - 교대 캘린더 & 급여 계산기</title>
+    <title>교대근무 - 교대 캘린더 & 급여 계산기</title>
 
     <!-- iOS Safari & Android 홈 화면 추가 (단독 PWA 앱 규격) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="코써 근무">
+    <meta name="apple-mobile-web-app-title" content="교대근무">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#ffffff">
 
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232563eb'/><text x='50%' y='68%' font-size='44' font-weight='900' fill='white' text-anchor='middle'>코써</text></svg>">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232563eb'/><text x='50%' y='68%' font-size='44' font-weight='900' fill='white' text-anchor='middle'>코써</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232563eb'/><text x='50%' y='68%' font-size='44' font-weight='900' fill='white' text-anchor='middle'>교대</text></svg>">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%232563eb'/><text x='50%' y='68%' font-size='44' font-weight='900' fill='white' text-anchor='middle'>교대</text></svg>">
 
     <style>
         :root {
@@ -61,7 +61,7 @@
             padding: 10px 14px;
         }
 
-        /* 1. 상단 헤더 */
+        /* 상단 헤더 */
         .app-header {
             display: flex;
             justify-content: space-between;
@@ -582,7 +582,7 @@
             cursor: pointer;
         }
 
-        /* 2. 컬러 이모지 하단 네비게이션 바 */
+        /* 컬러 이모지 하단 네비게이션 바 */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -715,11 +715,11 @@
 </head>
 <body>
     <div class="container">
-        <!-- 1. 상단 헤더 (브랜드 & A/B/C조 선택) -->
+        <!-- 1. 상단 헤더 -->
         <div class="app-header">
             <div class="brand-box">
-                <div class="brand-logo">코써</div>
-                <div class="brand-title">코써 근무</div>
+                <div class="brand-logo">교대</div>
+                <div class="brand-title">교대근무</div>
             </div>
             <div class="group-selector-wrap">
                 <button class="group-btn" id="btn-grp-A" onclick="setGroup('A')">A조</button>
@@ -794,7 +794,7 @@
                         <div class="sub-val" id="hero-regular-pay" style="color: #38bdf8;">0 원</div>
                     </div>
                     <div>
-                        <div class="hero-label">상여금 (지급월 대상)</div>
+                        <div class="hero-label">상여금 / 신입지원금</div>
                         <div class="sub-val" id="hero-bonus-pay" style="color: #c084fc;">0 원</div>
                     </div>
                 </div>
@@ -842,17 +842,17 @@
                         <input type="number" id="inp-holiday-bonus" value="0" step="10000" min="0" oninput="calculatePayrollFromInputs()" placeholder="예: 50000">
                     </div>
                     <div class="input-group">
-                        <label>입사년월일 (연차·소급 판정)</label>
+                        <label>입사년월일 (연차·소급·신입 판정)</label>
                         <input type="date" id="inp-hire-date" onchange="onPayrollHireDateChange()">
                     </div>
                 </div>
 
                 <div class="toggle-box" onclick="toggleBonusCheck()">
-                    <label for="inp-bonus-check">짝수달 상여금 50% 지급 (근속수당 가산)</label>
+                    <label for="inp-bonus-check" id="lbl-bonus-check">짝수달 상여금 50% 지급 (근속수당 가산)</label>
                     <input type="checkbox" id="inp-bonus-check" onchange="calculatePayrollFromInputs()">
                 </div>
                 <div class="toggle-box" onclick="toggleRetroCheck()">
-                    <label for="inp-retro-check">기타소급적용 (17년 이전 입사자 대상 보전금)</label>
+                    <label for="inp-retro-check" id="lbl-retro-check">기타지급액 적용 (입사년도 기준 자동 산정)</label>
                     <input type="checkbox" id="inp-retro-check" onchange="calculatePayrollFromInputs()">
                 </div>
 
@@ -881,11 +881,18 @@
                             <td><strong>명절근무수당</strong></td>
                             <td class="num" id="row-holiday-bonus" style="color:#166534; font-weight:800;">0</td>
                         </tr>
-                        <tr style="background:#fefce8;">
-                            <td><strong>기타소급적용 (17년 이전 입사자)</strong></td>
+                        <tr style="background:#fefce8;" id="tr-other-pay">
+                            <td><strong id="label-other-pay">기타지급액</strong></td>
                             <td class="num" id="row-other-pay" style="color:#b45309; font-weight:800;">0</td>
                         </tr>
-                        <tr class="bonus-row"><td>상여금 (기본급 50% + 근속수당)</td><td class="num" id="row-bonus-pay">0</td></tr>
+                        <tr class="bonus-row" id="tr-bonus-pay">
+                            <td>상여금 (기본급 50% + 근속수당)</td>
+                            <td class="num" id="row-bonus-pay">0</td>
+                        </tr>
+                        <tr style="background:#fdf2f8; display:none;" id="tr-entry-bonus">
+                            <td><strong>신입 지원금 (1년 미만 매월 30만)</strong></td>
+                            <td class="num" id="row-entry-bonus" style="color:#db2777; font-weight:800;">300,000</td>
+                        </tr>
                         <tr class="total-row"><td>총 지급액 (세전)</td><td class="num" id="row-gross-pay" style="color:var(--primary); font-size:14px;">0</td></tr>
                     </tbody>
                 </table>
@@ -976,8 +983,8 @@
                         <input type="number" id="input-seniority-pay" value="0" step="1000" onchange="saveWageConfig()" placeholder="예: 70000">
                     </div>
                     <div class="input-group">
-                        <label>기타소급 적용 상태</label>
-                        <input type="text" id="disp-retro-status" value="미적용 (17년 이후 입사)" readonly style="background:#f1f5f9; font-weight:800;">
+                        <label>기타지급액 적용 상태</label>
+                        <input type="text" id="disp-retro-status" value="미적용" readonly style="background:#f1f5f9; font-weight:800;">
                     </div>
                 </div>
 
@@ -988,11 +995,11 @@
             </div>
 
             <div class="card">
-                <div class="card-header"><span>회계연도 연차 및 사내 규정 안내</span></div>
+                <div class="card-header"><span>회계연도 연차 및 급여 규정 안내</span></div>
                 <div style="font-size: 12px; color: var(--text-sub); line-height: 1.65;">
                     • <strong>회계연도 기준(매년 1월 1일):</strong> 전사원이 동일하게 매년 1월 1일 기준으로 연차가 일괄 정산 및 부여됩니다.<br>
+                    • <strong>1년 미만 신입사원:</strong> 짝수달 상여금(50%) 대신 매월 300,000원의 신입 지원금이 지급됩니다.<br>
                     • <strong>스케줄러 메모 기능:</strong> 캘린더 날짜를 터치하여 메모를 입력하면 날짜 칸에 📝 뱃지로 표시됩니다.<br>
-                    • <strong>시급/통상시급 가이드:</strong> 기본시급 예시는 최저시급(10,320원), 통상시급은 11,000원 예시를 참고하여 자유롭게 입력하실 수 있습니다.<br>
                     • <strong>저장 및 초기화:</strong> 입력하신 모든 시급, 연차, 수당, 메모 설정은 💾 [설정 저장] 버튼을 통해 브라우저에 안전하게 보존됩니다.
                 </div>
             </div>
@@ -1151,6 +1158,9 @@
 
         let overrides = {};
         let dayMemos = {};
+        let currentNightNoOt = 0;
+        let currentNightSpNoOt = 0;
+
         let config = {
             hireDate: '',
             totalLeave: 0,
@@ -1394,12 +1404,12 @@
             if (tenureYears <= 1) {
                 const monthsWorked = 12 - hm + (hd === 1 ? 1 : 0);
                 leaveDays = parseFloat((15 * (monthsWorked / 12)).toFixed(1));
-                const reformTag = isPreReform ? "2017.05.29 이전 입사 (기타소급 대상)" : "2017.05.29 이후 입사";
+                const reformTag = isPreReform ? "2017.05.29 이전 입사 (구법 규정)" : "개정법 적용";
                 desc = `회계연도 기준 1년차 정산: 전년도 ${monthsWorked}개월 근무 비례연차 ${leaveDays}일 [${reformTag}]`;
             } else {
                 let added = Math.max(0, Math.floor((tenureYears - 3) / 2));
                 leaveDays = Math.min(25, 15 + added);
-                const reformTag = isPreReform ? "2017.05.29 이전 입사 (기타소급 대상)" : "2017.05.29 이후 입사";
+                const reformTag = isPreReform ? "2017.05.29 이전 입사" : "개정법 적용";
                 desc = `회계연도 기준 근속 ${tenureYears}년차 정기부여: 기본 15일 + 근속가산 ${added}일 = ${leaveDays}일 [${reformTag}]`;
             }
 
@@ -1422,9 +1432,17 @@
                 infoBox.innerHTML = `📌 <strong>${res.desc}</strong>`;
             }
 
-            config.applyRetroPay = res.isPre2017;
-            document.getElementById('inp-retro-check').checked = res.isPre2017;
-            updateRetroStatusText(res.isPre2017);
+            // 입사년도에 따른 기타지급액 상태 자동 판정
+            if (hireVal) {
+                const hy = parseInt(hireVal.split('-')[0], 10);
+                config.applyRetroPay = (hy < 2020);
+                document.getElementById('inp-retro-check').checked = config.applyRetroPay;
+                updateRetroStatusText(hy);
+            } else {
+                config.applyRetroPay = false;
+                document.getElementById('inp-retro-check').checked = false;
+                updateRetroStatusText(null);
+            }
 
             saveConfig();
             updateLeaveStats();
@@ -1552,21 +1570,36 @@
             const chk = document.getElementById('inp-retro-check');
             chk.checked = !chk.checked;
             config.applyRetroPay = chk.checked;
-            updateRetroStatusText(chk.checked);
+            
+            const hireVal = config.hireDate;
+            const hy = hireVal ? parseInt(hireVal.split('-')[0], 10) : null;
+            updateRetroStatusText(chk.checked ? hy : -1);
+            
             saveConfig();
             calculatePayrollFromInputs();
         }
 
-        function updateRetroStatusText(isApplied) {
+        function updateRetroStatusText(hy) {
             const el = document.getElementById('disp-retro-status');
-            if (el) {
-                if (isApplied) {
-                    el.value = "적용 (17년 이전 입사)";
-                    el.style.color = "#b45309";
-                } else {
-                    el.value = "미적용 (17년 이후 입사)";
-                    el.style.color = "#64748b";
-                }
+            const lbl = document.getElementById('label-other-pay');
+            if (!el) return;
+
+            if (hy === null || hy === -1) {
+                el.value = "미적용 (0원)";
+                el.style.color = "#64748b";
+                if (lbl) lbl.innerText = "기타지급액";
+            } else if (hy < 2018) {
+                el.value = "적용 (2018년 이전 입사자 수식)";
+                el.style.color = "#b45309";
+                if (lbl) lbl.innerText = "기타지급액 (2018년 이전)";
+            } else if (hy < 2020) {
+                el.value = "적용 (2018~2019년 입사자 수식)";
+                el.style.color = "#b45309";
+                if (lbl) lbl.innerText = "기타지급액 (2018~2019년)";
+            } else {
+                el.value = "미적용 (2020년 이후 입사자)";
+                el.style.color = "#64748b";
+                if (lbl) lbl.innerText = "기타지급액 (2020년 이후 0원)";
             }
         }
 
@@ -1594,6 +1627,8 @@
             let E4 = 0;
             let E5 = 0;
             let noOtDays = 0;
+            currentNightNoOt = 0;
+            currentNightSpNoOt = 0;
 
             let curr = new Date(startDate.getTime());
             while (curr <= endDate) {
@@ -1608,8 +1643,12 @@
                 } else if (shift.type === 'SPECIAL_NIGHT') {
                     E5++;
                 } else if (shift.type === 'NO_OT') {
-                    if (shift.origType === 'NIGHT') E3++;
-                    else E2++;
+                    if (shift.origType === 'NIGHT') {
+                        E3++;
+                        currentNightNoOt++;
+                    } else {
+                        E2++;
+                    }
                     noOtDays++;
                 }
 
@@ -1640,7 +1679,7 @@
             const E5 = parseFloat(document.getElementById('inp-nightsp-days').value) || 0;
             const noOtDays = parseFloat(document.getElementById('inp-no-ot-days').value) || 0;
             const holidayBonus = parseFloat(document.getElementById('inp-holiday-bonus').value) || 0;
-            const hasBonus = document.getElementById('inp-bonus-check').checked;
+            const hasBonusCheck = document.getElementById('inp-bonus-check').checked;
             const applyRetro = document.getElementById('inp-retro-check').checked;
 
             const B7 = config.baseHourly;
@@ -1662,30 +1701,102 @@
             const holOtPay = Math.round(B8 * 2.0 * 2.5 * (E4 + E5));
             const holNightPay = Math.round(B8 * 0.5 * 7.0 * E5);
 
+            // 1. 입사년월일 기준 분석 (1년 미만 여부 & 입사년도 분류)
+            const hireVal = config.hireDate;
+            let isUnderOneYear = false;
+            let hireYear = 0;
+
+            if (hireVal) {
+                const parts = hireVal.split('-');
+                const hy = parseInt(parts[0], 10);
+                const hm = parseInt(parts[1], 10);
+                const hd = parseInt(parts[2], 10);
+                hireYear = hy;
+
+                const currentPayYear = currentPayDate.getFullYear();
+                const currentPayMonth = currentPayDate.getMonth() + 1;
+                const payEndDate = new Date(currentPayYear, currentPayMonth - 1, 15);
+                const oneYearAfterHire = new Date(hy + 1, hm - 1, hd);
+
+                if (payEndDate < oneYearAfterHire) {
+                    isUnderOneYear = true;
+                }
+            }
+
+            // 2. 기타지급액 산정 (입사년도 3대 구간 분기)
             let otherPay = 0;
-            if (applyRetro) {
-                const diff1 = ((B8 * 1.5 * 2.5 * E2) + (B8 * 1.5 * 3 * E3)) - (B8 * 1.5 * 2.5 * (E2 + E3));
-                const diff2 = ((B8 * 2 * 2.5 * E4) + (B8 * 2 * 3 * E5)) - (B8 * 2 * 2.5 * (E4 + E5));
-                const diff3 = (B8 * 0.5 * 8 * E5) - (B8 * 0.5 * 7 * E5);
-                const diff4 = (B8 * 0.5 * 8 * E3) - (B8 * 0.5 * 7 * E3);
-                otherPay = Math.round(diff1 + diff2 + diff3 + diff4);
+            if (applyRetro && hireYear > 0) {
+                if (hireYear < 2018) {
+                    // [조건 1] 2018년 이전 입사자
+                    const diff1 = ((B8 * 1.5 * 2.5 * E2) + (B8 * 1.5 * 3 * E3)) - (B8 * 1.5 * 2.5 * (E2 + E3));
+                    const diff2 = ((B8 * 2 * 2.5 * E4) + (B8 * 2 * 3 * E5)) - (B8 * 2 * 2.5 * (E4 + E5));
+                    const diff3 = (B8 * 0.5 * 8 * E5) - (B8 * 0.5 * 7 * E5);
+                    const diff4 = (B8 * 0.5 * 8 * E3) - (B8 * 0.5 * 7 * E3);
+                    otherPay = Math.round(diff1 + diff2 + diff3 + diff4);
+                } else if (hireYear < 2020) {
+                    // [조건 2] 2018년~2020년 이전 입사자 (2018, 2019)
+                    // 공식: (B10*0.5*8*B17)+(B10*0.5*8*B15)+(B10*0.5*8*B19)+(B10*0.5*8*B21)-(N8+N11)
+                    // B10=B8, B17=E5(야특), B15=E3(야간), B19=야 OT X, B21=야특 OT X, N8=야간수당, N11=휴일야간수당
+                    const B10 = B8;
+                    const B17 = E5;
+                    const B15 = E3;
+                    const B19 = currentNightNoOt;
+                    const B21 = currentNightSpNoOt;
+                    const N8 = nightPay;
+                    const N11 = holNightPay;
+                    otherPay = Math.round((B10 * 0.5 * 8 * B17) + (B10 * 0.5 * 8 * B15) + (B10 * 0.5 * 8 * B19) + (B10 * 0.5 * 8 * B21) - (N8 + N11));
+                } else {
+                    // [조건 3] 2020년 이후 입사자: 0원
+                    otherPay = 0;
+                }
+            }
+
+            // 3. 상여금 및 1년 미만 신입 지원금 (조건 4)
+            let bonusPay = 0;
+            let entryBonus = 0;
+
+            const trBonus = document.getElementById('tr-bonus-pay');
+            const trEntry = document.getElementById('tr-entry-bonus');
+            const bonusBadge = document.getElementById('bonus-badge');
+
+            if (isUnderOneYear) {
+                // 1년 미만: 짝수달 상여금 없음, 매월 300,000원 신입 지원금 지급
+                bonusPay = 0;
+                entryBonus = 300000;
+
+                if (trBonus) trBonus.style.display = 'none';
+                if (trEntry) trEntry.style.display = 'table-row';
+                if (bonusBadge) {
+                    bonusBadge.style.display = 'inline-block';
+                    bonusBadge.innerText = '신입지원금 (월 30만)';
+                    bonusBadge.style.background = '#fdf2f8';
+                    bonusBadge.style.color = '#db2777';
+                }
+            } else {
+                // 1년 이상: 정상 짝수달 상여금 지급 (기본급 50% + 근속수당)
+                entryBonus = 0;
+                if (hasBonusCheck) {
+                    bonusPay = Math.round(basicPay * 0.5) + seniorityPay;
+                    if (bonusBadge) {
+                        bonusBadge.style.display = 'inline-block';
+                        bonusBadge.innerText = '짝수달 상여';
+                        bonusBadge.style.background = '#faf5ff';
+                        bonusBadge.style.color = '#7c3aed';
+                    }
+                } else {
+                    if (bonusBadge) bonusBadge.style.display = 'none';
+                }
+
+                if (trBonus) trBonus.style.display = 'table-row';
+                if (trEntry) trEntry.style.display = 'none';
             }
 
             const regularGross = basicPay + dutyPay + seniorityPay + otPay + nightPay + holPay + holOtPay + holNightPay + otherPay + holidayBonus;
-
-            let bonusPay = 0;
-            if (hasBonus) {
-                bonusPay = Math.round(basicPay * 0.5) + seniorityPay;
-                document.getElementById('bonus-badge').style.display = 'inline-block';
-            } else {
-                document.getElementById('bonus-badge').style.display = 'none';
-            }
-
-            const grandGross = regularGross + bonusPay;
+            const grandGross = regularGross + bonusPay + entryBonus;
 
             document.getElementById('hero-gross-pay').innerText = `${fmt(grandGross)} 원`;
             document.getElementById('hero-regular-pay').innerText = `${fmt(regularGross)} 원`;
-            document.getElementById('hero-bonus-pay').innerText = `${fmt(bonusPay)} 원`;
+            document.getElementById('hero-bonus-pay').innerText = `${fmt(bonusPay + entryBonus)} 원`;
 
             document.getElementById('row-base-pay').innerText = fmt(basicPay);
             document.getElementById('row-duty-pay').innerText = fmt(dutyPay);
@@ -1698,11 +1809,12 @@
             document.getElementById('row-holiday-bonus').innerText = fmt(holidayBonus);
             document.getElementById('row-other-pay').innerText = fmt(otherPay);
             document.getElementById('row-bonus-pay').innerText = fmt(bonusPay);
+            document.getElementById('row-entry-bonus').innerText = fmt(entryBonus);
             document.getElementById('row-gross-pay').innerText = fmt(grandGross);
         }
 
         function loadConfig() {
-            const saved = localStorage.getItem('shift_salary_config_v15');
+            const saved = localStorage.getItem('shift_salary_config_v17');
             if (saved) {
                 try { config = { ...config, ...JSON.parse(saved) }; } catch (e) {}
             }
@@ -1712,6 +1824,9 @@
                 const res = calculateFiscalYearLeave(config.hireDate, 2026);
                 const infoBox = document.getElementById('leave-calc-info-box');
                 if (infoBox) infoBox.innerHTML = `📌 <strong>${res.desc}</strong>`;
+
+                const hy = parseInt(config.hireDate.split('-')[0], 10);
+                updateRetroStatusText(hy);
             }
             document.getElementById('input-total-leave').value = config.totalLeave;
             document.getElementById('input-base-hourly').value = config.baseHourly;
@@ -1720,11 +1835,10 @@
             document.getElementById('input-duty-pay').value = config.dutyPay;
             document.getElementById('input-seniority-pay').value = config.seniorityPay;
             document.getElementById('inp-retro-check').checked = config.applyRetroPay;
-            updateRetroStatusText(config.applyRetroPay);
         }
 
         function saveConfig() {
-            localStorage.setItem('shift_salary_config_v15', JSON.stringify(config));
+            localStorage.setItem('shift_salary_config_v17', JSON.stringify(config));
         }
 
         function resetDefaults() {
@@ -1740,7 +1854,7 @@
                     applyRetroPay: false,
                     holidayBonus: 0
                 };
-                localStorage.removeItem('shift_salary_config_v15');
+                localStorage.removeItem('shift_salary_config_v17');
                 localStorage.removeItem('shift_day_memos');
                 dayMemos = {};
                 loadConfig();
