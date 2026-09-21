@@ -44,7 +44,7 @@
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
         }
 
         body {
@@ -61,46 +61,46 @@
             padding: 10px 14px;
         }
 
-        /* 최상단 일체형 헤더 바 (브랜드 + 오늘보기 + 잔여연차 + 조선택) */
+        /* 최상단 일체형 헤더 바 (브랜드 + 오늘보기 + 잔여연차 + 조선택 - 1칸 더 큼직하게 확장) */
         .app-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 6px;
-            padding: 7px 10px;
-            border-radius: 16px;
-            margin-bottom: 8px;
-            background: rgba(255, 255, 255, 0.75);
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 18px;
+            margin-bottom: 12px;
+            background: rgba(255, 255, 255, 0.82);
             -webkit-backdrop-filter: blur(25px) saturate(180%);
             backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.85);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03),
-                        inset 0 1px 1.5px rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 5px 18px rgba(0, 0, 0, 0.04),
+                        inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
         }
 
         .brand-box {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 7px;
             flex-shrink: 0;
         }
 
         .brand-logo {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            border-radius: 8px;
+            border-radius: 9px;
             color: white;
             font-weight: 900;
-            font-size: 12px;
+            font-size: 13px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+            box-shadow: 0 3px 8px rgba(37, 99, 235, 0.35);
         }
 
         .brand-title {
-            font-size: 15px;
+            font-size: 17px;
             font-weight: 800;
             color: #0f172a;
             letter-spacing: -0.5px;
@@ -110,20 +110,20 @@
         .header-quick-chips {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
             flex-shrink: 1;
         }
 
         .header-chip {
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.85);
             border-radius: 20px;
-            padding: 5px 8px;
-            font-size: 11.5px;
+            padding: 6px 11px;
+            font-size: 12px;
             font-weight: 800;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 2px;
+            gap: 3px;
             transition: all 0.15s ease;
             white-space: nowrap;
         }
@@ -133,15 +133,15 @@
         }
 
         .header-chip.today-chip {
-            background: rgba(239, 246, 255, 0.85);
+            background: rgba(239, 246, 255, 0.9);
             color: var(--primary);
-            border-color: rgba(37, 99, 235, 0.3);
+            border-color: rgba(37, 99, 235, 0.35);
         }
 
         .header-chip.leave-chip {
-            background: rgba(240, 253, 250, 0.85);
+            background: rgba(240, 253, 250, 0.9);
             color: #0f766e;
-            border-color: rgba(15, 118, 110, 0.3);
+            border-color: rgba(15, 118, 110, 0.35);
         }
 
         .header-chip strong {
@@ -160,17 +160,17 @@
             appearance: none;
             -webkit-appearance: none;
             -moz-appearance: none;
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid rgba(37, 99, 235, 0.35);
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(37, 99, 235, 0.4);
             border-radius: 20px;
-            padding: 5px 22px 5px 11px;
-            font-size: 12px;
+            padding: 6px 24px 6px 12px;
+            font-size: 12.5px;
             font-weight: 900;
             color: var(--primary);
             cursor: pointer;
             outline: none;
-            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12),
-                        inset 0 1px 1.5px rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 7px rgba(37, 99, 235, 0.14),
+                        inset 0 1px 1.5px rgba(255, 255, 255, 0.95);
             transition: all 0.2s ease;
         }
 
@@ -182,7 +182,7 @@
         .group-select-wrapper::after {
             content: "▾";
             position: absolute;
-            right: 8px;
+            right: 9px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 10px;
@@ -196,43 +196,50 @@
                 display: none;
             }
             .header-chip {
-                padding: 4px 6px;
-                font-size: 11px;
+                padding: 5px 8px;
+                font-size: 11.5px;
             }
         }
 
-        /* 월 이동 바 */
+        /* 월 이동 바 (1칸 더 큼직하고 시원한 크기) */
         .month-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
             background: #ffffff;
-            padding: 8px 12px;
-            border-radius: 14px;
+            padding: 12px 16px;
+            border-radius: 16px;
             border: 1px solid var(--border);
-            margin-bottom: 8px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+            margin-bottom: 12px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.03);
         }
 
         .month-title {
-            font-size: 16.5px;
-            font-weight: 800;
+            font-size: 20px;
+            font-weight: 900;
             letter-spacing: -0.5px;
+            color: #0f172a;
         }
 
         .nav-btn {
             background: #f1f5f9;
             border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            font-size: 14px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            font-size: 16px;
             font-weight: bold;
             color: #334155;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all 0.15s ease;
+        }
+
+        .nav-btn:active {
+            transform: scale(0.92);
+            background: #e2e8f0;
         }
 
         /* 월간 통계 알약 배지 */
@@ -271,6 +278,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
             overflow: hidden;
             margin-bottom: 12px;
+            touch-action: pan-y; /* 수직 스크롤 유지 및 수평 스와이프 반응 */
         }
 
         .cal-weekdays {
@@ -291,6 +299,7 @@
         .cal-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
+            transition: transform 0.18s ease-out, opacity 0.18s ease-out;
         }
 
         /* 여백을 캘린더에 집중하여 시원하게 커진 날짜 칸 */
@@ -311,36 +320,37 @@
 
         .cal-day:nth-child(7n) { border-right: none; }
         .cal-day.other-month { background: #fafafa; opacity: 0.35; }
-        .cal-day.today { background: rgba(239, 246, 255, 0.6); }
+        .cal-day.today { background: rgba(254, 242, 242, 0.45); }
 
+        /* 아이폰 순정 캘린더 스타일 (이미지): 오늘 날짜 선명한 애플 레드 원형 배지 & 흰색 숫자 */
         .day-num {
-            font-size: 12px;
+            font-size: 13px;
             font-weight: 700;
             margin-bottom: 2px;
-            width: 22px;
-            height: 22px;
+            width: 25px;
+            height: 25px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
             transition: all 0.2s ease;
+            color: #1c1c1e;
         }
 
-        /* 구글 캘린더 스타일: 오늘 날짜 파란색 원형 배지 & 흰색 숫자 */
         .cal-day.today .day-num {
-            background: #1a73e8;
+            background: #ff3b30; /* 아이폰 순정 캘린더 시그니처 레드 */
             color: #ffffff !important;
-            font-weight: 900;
-            box-shadow: 0 2px 6px rgba(26, 115, 232, 0.4);
+            font-weight: 800;
+            box-shadow: 0 3px 8px rgba(255, 59, 48, 0.42);
         }
 
-        .cal-day.sun .day-num { color: #e11d48; }
-        .cal-day.sat .day-num { color: #0284c7; }
-        .cal-day.holiday .day-num { color: #e11d48; font-weight: 900; }
+        .cal-day.sun .day-num { color: #ff3b30; }
+        .cal-day.sat .day-num { color: #007aff; }
+        .cal-day.holiday .day-num { color: #ff3b30; font-weight: 900; }
 
-        /* 구글 캘린더 스타일: 오늘에 해당하는 요일 헤더 파란색 강조 */
+        /* 오늘에 해당하는 요일 헤더 애플 레드 강조 */
         .cal-weekdays div.today-col {
-            color: #1a73e8 !important;
+            color: #ff3b30 !important;
             font-weight: 900;
         }
 
@@ -752,7 +762,7 @@
                     <span>📍 오늘</span>
                 </button>
                 <button class="header-chip leave-chip" onclick="switchView('leave')">
-                    <span>🏖️ <strong id="quick-remain-leave">0</strong>일</span>
+                    <span>🏖️ 잔여 연차: <strong id="quick-remain-leave">0</strong>일</span>
                 </button>
             </div>
 
@@ -1006,6 +1016,12 @@
                     <button class="btn-save" onclick="manualSaveData()">💾 설정 저장</button>
                     <button class="btn-reset-data" onclick="resetDefaults()">🔄 초기화(기본값)</button>
                 </div>
+
+                <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <button class="btn-backup" onclick="exportDataToFile()">📥 데이터 백업(다운로드)</button>
+                    <button class="btn-backup" onclick="document.getElementById('file-restore-input').click()">📤 데이터 복원(불러오기)</button>
+                    <input type="file" id="file-restore-input" style="display:none;" accept=".json" onchange="importDataFromFile(event)">
+                </div>
             </div>
 
             <div class="card">
@@ -1014,7 +1030,7 @@
                     • <strong>회계연도 기준(매년 1월 1일):</strong> 전사원이 동일하게 매년 1월 1일 기준으로 연차가 일괄 정산 및 부여됩니다.<br>
                     • <strong>1년 미만 신입사원:</strong> 짝수달 상여금(50%) 대신 매월 300,000원의 신입 지원금이 지급됩니다.<br>
                     • <strong>스케줄러 메모 기능:</strong> 캘린더 날짜를 터치하여 메모를 입력하면 날짜 칸에 📝 뱃지로 표시됩니다.<br>
-                    • <strong>저장 및 초기화:</strong> 입력하신 모든 시급, 연차, 수당, 메모 설정은 💾 [설정 저장] 버튼을 통해 브라우저에 안전하게 보존됩니다.
+                    • <strong>데이터 보존 안내:</strong> 입력한 데이터는 영구 마스터 키에 보존되며, 기기 변경 시 '데이터 백업'을 통해 안전하게 옮길 수 있습니다.
                 </div>
             </div>
         </section>
@@ -1278,7 +1294,7 @@
             const today = new Date();
             const todayStr = toDateKey(today.getFullYear(), today.getMonth(), today.getDate());
 
-            // 구글 캘린더 스타일: 당월 조회 시 오늘 요일 헤더 파란색 하이라이트
+            // 오늘 요일 헤더 애플 레드 하이라이트
             const isThisMonth = (today.getFullYear() === year && today.getMonth() === month);
             const weekdayDivs = document.querySelectorAll('.cal-weekdays div');
             weekdayDivs.forEach((el, idx) => {
@@ -1385,7 +1401,6 @@
             if (sb) sb.innerText = `${shift.name} ${icon}`;
         }
 
-        // 오늘 보기 클릭 시 캘린더 탭 전환 및 당일 포커스 이동
         function goToToday() {
             const today = new Date();
             currentCalDate = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -1395,12 +1410,12 @@
                 if (todayCell) {
                     todayCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     todayCell.style.transition = 'transform 0.25s ease, box-shadow 0.25s ease';
-                    todayCell.style.transform = 'scale(1.08)';
-                    todayCell.style.boxShadow = '0 0 0 2px var(--primary)';
+                    todayCell.style.transform = 'scale(1.10)';
+                    todayCell.style.boxShadow = '0 0 0 2.5px #ff3b30';
                     setTimeout(() => {
                         todayCell.style.transform = '';
                         todayCell.style.boxShadow = '';
-                    }, 650);
+                    }, 700);
                 }
             }, 120);
         }
@@ -1473,7 +1488,6 @@
                 infoBox.innerHTML = `📌 <strong>${res.desc}</strong>`;
             }
 
-            // 입사년도에 따른 기타지급액 상태 자동 판정
             if (hireVal) {
                 const hy = parseInt(hireVal.split('-')[0], 10);
                 config.applyRetroPay = (hy < 2020);
@@ -1639,15 +1653,15 @@
             } else if (hy < 2018) {
                 el.value = "적용 (2018년 이전 입사자 수식)";
                 el.style.color = "#b45309";
-                if (lbl) lbl.innerText = "기타지급액 (2018년 이전)";
+                if (lbl) lbl.innerText = "기타지급액";
             } else if (hy < 2020) {
                 el.value = "적용 (2018~2019년 입사자 수식)";
                 el.style.color = "#b45309";
-                if (lbl) lbl.innerText = "기타지급액 (2018~2019년)";
+                if (lbl) lbl.innerText = "기타지급액";
             } else {
                 el.value = "미적용 (2020년 이후 입사자)";
                 el.style.color = "#64748b";
-                if (lbl) lbl.innerText = "기타지급액 (2020년 이후 0원)";
+                if (lbl) lbl.innerText = "기타지급액";
             }
         }
 
@@ -1784,9 +1798,8 @@
                     otherPay = Math.round(diff1 + diff2 + diff3 + diff4);
                 } else if (hireYear < 2020) {
                     // [조건 2] 2018년~2020년 이전 입사자 (2018, 2019)
-                    // 수식: =(B10*0.5*8*B17)+(B10*0.5*8*B15)+(B10*0.5*8*B19)+(B10*0.5*8*B21)-(N8+N11)
-                    // B10: 통상시급(B8), B17: 야간(E3), B15: 주간(E2), B19: 주특(E4), B21: 야특(E5)
-                    // N8: 야간수당(nightPay), N11: 휴일야간수당(holNightPay)
+                    // 공식: (B10*0.5*8*B17)+(B10*0.5*8*B15)+(B10*0.5*8*B19)+(B10*0.5*8*B21)-(N8+N11)
+                    // B10=B8, B17=E5(야특), B15=E3(야간), B19=야 OT X, B21=야특 OT X, N8=야간수당, N11=휴일야간수당
                     const B10 = B8;
                     const B17 = E5;
                     const B15 = E3;
@@ -1796,7 +1809,7 @@
                     const N11 = holNightPay;
                     otherPay = Math.round((B10 * 0.5 * 8 * B17) + (B10 * 0.5 * 8 * B15) + (B10 * 0.5 * 8 * B19) + (B10 * 0.5 * 8 * B21) - (N8 + N11));
                 } else {
-                    // [조건 3] 2020년 이후 입사자: 기타지급액 없음
+                    // [조건 3] 2020년 이후 입사자: 0원
                     otherPay = 0;
                 }
             }
@@ -1863,8 +1876,33 @@
             document.getElementById('row-gross-pay').innerText = fmt(grandGross);
         }
 
+        // 과거 모든 버전의 키를 단일 마스터 키로 자동 복원 및 통합 (영구 보존)
         function loadConfig() {
-            const saved = localStorage.getItem('shift_salary_config_v17');
+            const legacyKeys = [
+                'shift_salary_config_v17',
+                'shift_salary_config_v16',
+                'shift_salary_config_v15',
+                'shift_salary_config_v14',
+                'shift_salary_config_v13',
+                'shift_salary_config_v12',
+                'shift_salary_config_v11',
+                'shift_salary_config_v10',
+                'shift_salary_config_v9',
+                'shift_salary_config'
+            ];
+
+            let saved = localStorage.getItem('shift_salary_config_master');
+            if (!saved) {
+                for (const k of legacyKeys) {
+                    const old = localStorage.getItem(k);
+                    if (old) {
+                        saved = old;
+                        localStorage.setItem('shift_salary_config_master', old);
+                        break;
+                    }
+                }
+            }
+
             if (saved) {
                 try { config = { ...config, ...JSON.parse(saved) }; } catch (e) {}
             }
@@ -1888,7 +1926,7 @@
         }
 
         function saveConfig() {
-            localStorage.setItem('shift_salary_config_v17', JSON.stringify(config));
+            localStorage.setItem('shift_salary_config_master', JSON.stringify(config));
         }
 
         function resetDefaults() {
@@ -1904,7 +1942,7 @@
                     applyRetroPay: false,
                     holidayBonus: 0
                 };
-                localStorage.removeItem('shift_salary_config_v17');
+                localStorage.removeItem('shift_salary_config_master');
                 localStorage.removeItem('shift_day_memos');
                 dayMemos = {};
                 loadConfig();
@@ -1914,6 +1952,72 @@
                 syncFromCalendar();
                 renderCalendar();
                 alert("🔄 초기화되었습니다.");
+            }
+        }
+
+        // 캘린더 좌/우 터치 스와이프 (이전달 / 다음달 넘기기)
+        function initCalendarSwipe() {
+            const calCard = document.querySelector('.calendar-card');
+            if (!calCard) return;
+
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchEndX = 0;
+            let touchEndY = 0;
+            let isSwiping = false;
+
+            calCard.addEventListener('touchstart', (e) => {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+                isSwiping = true;
+            }, { passive: true });
+
+            calCard.addEventListener('touchend', (e) => {
+                if (!isSwiping) return;
+                isSwiping = false;
+                touchEndX = e.changedTouches[0].screenX;
+                touchEndY = e.changedTouches[0].screenY;
+                handleSwipeGesture();
+            }, { passive: true });
+
+            function handleSwipeGesture() {
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
+                const minSwipeDist = 45;
+
+                // 세로 스크롤 동작과 겹치지 않도록 가로 스와이프가 더 명확할 때만 동작
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > minSwipeDist) {
+                    if (diffX < 0) {
+                        // 왼쪽으로 스와이프 -> 다음달로 이동
+                        animateMonthTransition(1);
+                    } else {
+                        // 오른쪽으로 스와이프 -> 이전달로 이동
+                        animateMonthTransition(-1);
+                    }
+                }
+            }
+
+            function animateMonthTransition(direction) {
+                const grid = document.getElementById('calendar-grid');
+                if (!grid) {
+                    changeMonth(direction);
+                    return;
+                }
+                grid.style.transition = 'transform 0.16s ease-out, opacity 0.16s ease-out';
+                grid.style.transform = `translateX(${-direction * 35}px)`;
+                grid.style.opacity = '0.35';
+
+                setTimeout(() => {
+                    changeMonth(direction);
+                    grid.style.transition = 'none';
+                    grid.style.transform = `translateX(${direction * 35}px)`;
+
+                    requestAnimationFrame(() => {
+                        grid.style.transition = 'transform 0.18s ease-out, opacity 0.18s ease-out';
+                        grid.style.transform = 'translateX(0)';
+                        grid.style.opacity = '1';
+                    });
+                }, 160);
             }
         }
 
@@ -1949,6 +2053,7 @@
             loadOverrides();
             renderCalendar();
             syncFromCalendar();
+            initCalendarSwipe();
         };
     </script>
 </body>
