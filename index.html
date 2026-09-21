@@ -44,7 +44,7 @@
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
         }
 
         body {
@@ -278,7 +278,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.03);
             overflow: hidden;
             margin-bottom: 12px;
-            touch-action: pan-y; /* 수직 스크롤 유지 및 수평 스와이프 반응 */
+            touch-action: pan-y;
         }
 
         .cal-weekdays {
@@ -320,9 +320,9 @@
 
         .cal-day:nth-child(7n) { border-right: none; }
         .cal-day.other-month { background: #fafafa; opacity: 0.35; }
-        .cal-day.today { background: rgba(254, 242, 242, 0.45); }
+        .cal-day.today { background: rgba(239, 246, 255, 0.6); }
 
-        /* 아이폰 순정 캘린더 스타일 (이미지): 오늘 날짜 선명한 애플 레드 원형 배지 & 흰색 숫자 */
+        /* 아이폰 순정 캘린더 스타일: 오늘 날짜 선명한 애플 레드 원형 배지 & 흰색 숫자 */
         .day-num {
             font-size: 13px;
             font-weight: 700;
@@ -338,7 +338,7 @@
         }
 
         .cal-day.today .day-num {
-            background: #ff3b30; /* 아이폰 순정 캘린더 시그니처 레드 */
+            background: #ff3b30;
             color: #ffffff !important;
             font-weight: 800;
             box-shadow: 0 3px 8px rgba(255, 59, 48, 0.42);
@@ -1016,12 +1016,6 @@
                     <button class="btn-save" onclick="manualSaveData()">💾 설정 저장</button>
                     <button class="btn-reset-data" onclick="resetDefaults()">🔄 초기화(기본값)</button>
                 </div>
-
-                <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <button class="btn-backup" onclick="exportDataToFile()">📥 데이터 백업(다운로드)</button>
-                    <button class="btn-backup" onclick="document.getElementById('file-restore-input').click()">📤 데이터 복원(불러오기)</button>
-                    <input type="file" id="file-restore-input" style="display:none;" accept=".json" onchange="importDataFromFile(event)">
-                </div>
             </div>
 
             <div class="card">
@@ -1030,7 +1024,7 @@
                     • <strong>회계연도 기준(매년 1월 1일):</strong> 전사원이 동일하게 매년 1월 1일 기준으로 연차가 일괄 정산 및 부여됩니다.<br>
                     • <strong>1년 미만 신입사원:</strong> 짝수달 상여금(50%) 대신 매월 300,000원의 신입 지원금이 지급됩니다.<br>
                     • <strong>스케줄러 메모 기능:</strong> 캘린더 날짜를 터치하여 메모를 입력하면 날짜 칸에 📝 뱃지로 표시됩니다.<br>
-                    • <strong>데이터 보존 안내:</strong> 입력한 데이터는 영구 마스터 키에 보존되며, 기기 변경 시 '데이터 백업'을 통해 안전하게 옮길 수 있습니다.
+                    • <strong>저장 및 초기화:</strong> 입력하신 모든 시급, 연차, 수당, 메모 설정은 💾 [설정 저장] 버튼을 통해 안전하게 보존됩니다.
                 </div>
             </div>
         </section>
@@ -1488,6 +1482,7 @@
                 infoBox.innerHTML = `📌 <strong>${res.desc}</strong>`;
             }
 
+            // 입사년도에 따른 기타지급액 상태 자동 판정
             if (hireVal) {
                 const hy = parseInt(hireVal.split('-')[0], 10);
                 config.applyRetroPay = (hy < 2020);
@@ -1775,7 +1770,6 @@
                 const hd = parseInt(parts[2], 10);
                 hireYear = hy;
 
-                // 현재 조회 급여월 산정 마감일 (예: 2026-09-15)
                 const currentPayYear = currentPayDate.getFullYear();
                 const currentPayMonth = currentPayDate.getMonth() + 1;
                 const payEndDate = new Date(currentPayYear, currentPayMonth - 1, 15);
@@ -1790,16 +1784,12 @@
             let otherPay = 0;
             if (applyRetro && hireYear > 0) {
                 if (hireYear < 2018) {
-                    // [조건 1] 2018년 이전 입사자 (구법/소급 수식)
                     const diff1 = ((B8 * 1.5 * 2.5 * E2) + (B8 * 1.5 * 3 * E3)) - (B8 * 1.5 * 2.5 * (E2 + E3));
                     const diff2 = ((B8 * 2 * 2.5 * E4) + (B8 * 2 * 3 * E5)) - (B8 * 2 * 2.5 * (E4 + E5));
                     const diff3 = (B8 * 0.5 * 8 * E5) - (B8 * 0.5 * 7 * E5);
                     const diff4 = (B8 * 0.5 * 8 * E3) - (B8 * 0.5 * 7 * E3);
                     otherPay = Math.round(diff1 + diff2 + diff3 + diff4);
                 } else if (hireYear < 2020) {
-                    // [조건 2] 2018년~2020년 이전 입사자 (2018, 2019)
-                    // 공식: (B10*0.5*8*B17)+(B10*0.5*8*B15)+(B10*0.5*8*B19)+(B10*0.5*8*B21)-(N8+N11)
-                    // B10=B8, B17=E5(야특), B15=E3(야간), B19=야 OT X, B21=야특 OT X, N8=야간수당, N11=휴일야간수당
                     const B10 = B8;
                     const B17 = E5;
                     const B15 = E3;
@@ -1809,7 +1799,6 @@
                     const N11 = holNightPay;
                     otherPay = Math.round((B10 * 0.5 * 8 * B17) + (B10 * 0.5 * 8 * B15) + (B10 * 0.5 * 8 * B19) + (B10 * 0.5 * 8 * B21) - (N8 + N11));
                 } else {
-                    // [조건 3] 2020년 이후 입사자: 0원
                     otherPay = 0;
                 }
             }
@@ -1823,7 +1812,6 @@
             const bonusBadge = document.getElementById('bonus-badge');
 
             if (isUnderOneYear) {
-                // 1년 미만: 짝수달 상여금 없음, 매월 300,000원 신입 지원금 지급
                 bonusPay = 0;
                 entryBonus = 300000;
 
@@ -1836,7 +1824,6 @@
                     bonusBadge.style.color = '#db2777';
                 }
             } else {
-                // 1년 이상: 정상 짝수달 상여금 지급 (기본급 50% + 근속수당)
                 entryBonus = 0;
                 if (hasBonusCheck) {
                     bonusPay = Math.round(basicPay * 0.5) + seniorityPay;
@@ -1876,7 +1863,6 @@
             document.getElementById('row-gross-pay').innerText = fmt(grandGross);
         }
 
-        // 과거 모든 버전의 키를 단일 마스터 키로 자동 복원 및 통합 (영구 보존)
         function loadConfig() {
             const legacyKeys = [
                 'shift_salary_config_v17',
