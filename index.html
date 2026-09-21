@@ -61,109 +61,144 @@
             padding: 10px 14px;
         }
 
-        /* 상단 헤더 */
+        /* 최상단 일체형 헤더 바 (브랜드 + 오늘보기 + 잔여연차 + 조선택) */
         .app-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 6px 0 10px 0;
+            justify-content: space-between;
+            gap: 6px;
+            padding: 7px 10px;
+            border-radius: 16px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.75);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.85);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03),
+                        inset 0 1px 1.5px rgba(255, 255, 255, 0.9);
         }
 
         .brand-box {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            flex-shrink: 0;
         }
 
         .brand-logo {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            border-radius: 9px;
+            border-radius: 8px;
             color: white;
             font-weight: 900;
-            font-size: 13px;
+            font-size: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
         }
 
         .brand-title {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 800;
             color: #0f172a;
             letter-spacing: -0.5px;
         }
 
-        .group-selector-wrap {
+        /* 최상단 중앙 퀵 칩: 오늘 보기 & 잔여 연차 */
+        .header-quick-chips {
             display: flex;
-            background: #e2e8f0;
-            border-radius: 9999px;
-            padding: 3px;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 1;
+        }
+
+        .header-chip {
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 20px;
+            padding: 5px 8px;
+            font-size: 11.5px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
             gap: 2px;
+            transition: all 0.15s ease;
+            white-space: nowrap;
         }
 
-        .group-btn {
-            border: none;
-            background: transparent;
-            font-size: 13px;
-            font-weight: 800;
-            padding: 6px 14px;
-            border-radius: 9999px;
-            color: #475569;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .group-btn.active {
-            background: #ffffff;
-            color: var(--primary);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-        }
-
-        /* 오늘 내 근무 현황 카드 */
-        .today-card {
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            color: #ffffff;
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 3px 6px rgba(15, 23, 42, 0.12);
-        }
-
-        .today-card .date-text {
-            font-size: 12px;
-            color: #94a3b8;
-            margin-bottom: 2px;
-        }
-
-        .today-card .shift-text {
-            font-size: 18px;
-            font-weight: 800;
-            color: #38bdf8;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .today-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #f1f5f9;
-            font-size: 12px;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.15s, transform 0.1s;
-        }
-
-        .today-btn:active {
+        .header-chip:active {
             transform: scale(0.95);
+        }
+
+        .header-chip.today-chip {
+            background: rgba(239, 246, 255, 0.85);
+            color: var(--primary);
+            border-color: rgba(37, 99, 235, 0.3);
+        }
+
+        .header-chip.leave-chip {
+            background: rgba(240, 253, 250, 0.85);
+            color: #0f766e;
+            border-color: rgba(15, 118, 110, 0.3);
+        }
+
+        .header-chip strong {
+            font-weight: 900;
+        }
+
+        /* 단일 콤팩트 조 선택 드롭다운 (공간 절약형) */
+        .group-select-wrapper {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .group-select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(37, 99, 235, 0.35);
+            border-radius: 20px;
+            padding: 5px 22px 5px 11px;
+            font-size: 12px;
+            font-weight: 900;
+            color: var(--primary);
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.12),
+                        inset 0 1px 1.5px rgba(255, 255, 255, 0.9);
+            transition: all 0.2s ease;
+        }
+
+        .group-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.25);
+        }
+
+        .group-select-wrapper::after {
+            content: "▾";
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 10px;
+            color: var(--primary);
+            pointer-events: none;
+            font-weight: 900;
+        }
+
+        @media (max-width: 390px) {
+            .brand-title {
+                display: none;
+            }
+            .header-chip {
+                padding: 4px 6px;
+                font-size: 11px;
+            }
         }
 
         /* 월 이동 바 */
@@ -172,15 +207,15 @@
             justify-content: space-between;
             align-items: center;
             background: #ffffff;
-            padding: 10px 14px;
-            border-radius: 12px;
+            padding: 8px 12px;
+            border-radius: 14px;
             border: 1px solid var(--border);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.03);
         }
 
         .month-title {
-            font-size: 17px;
+            font-size: 16.5px;
             font-weight: 800;
             letter-spacing: -0.5px;
         }
@@ -188,54 +223,16 @@
         .nav-btn {
             background: #f1f5f9;
             border: none;
-            width: 34px;
-            height: 34px;
+            width: 32px;
+            height: 32px;
             border-radius: 8px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: bold;
             color: #334155;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        /* 연차 현황 배너 */
-        .leave-banner {
-            background: linear-gradient(135deg, #0f766e, #115e59);
-            color: #ffffff;
-            border-radius: 12px;
-            padding: 12px 16px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 4px rgba(15, 118, 110, 0.15);
-            cursor: pointer;
-        }
-
-        .leave-banner .title {
-            font-size: 12px;
-            color: #99f6e4;
-            margin-bottom: 3px;
-            font-weight: 600;
-        }
-
-        .leave-banner .stats {
-            font-size: 17px;
-            font-weight: 800;
-        }
-
-        .leave-banner .sub {
-            font-size: 11px;
-            color: #ccfbf1;
-            text-align: right;
-        }
-
-        .leave-banner .pay {
-            font-size: 14px;
-            font-weight: 800;
-            color: #ffffff;
         }
 
         /* 월간 통계 알약 배지 */
@@ -296,9 +293,10 @@
             grid-template-columns: repeat(7, 1fr);
         }
 
+        /* 여백을 캘린더에 집중하여 시원하게 커진 날짜 칸 */
         .cal-day {
-            min-height: 76px;
-            padding: 4px 2px;
+            min-height: 102px;
+            padding: 6px 3px;
             border-right: 1px solid #f1f5f9;
             border-bottom: 1px solid #f1f5f9;
             display: flex;
@@ -358,11 +356,11 @@
         }
 
         .shift-badge {
-            font-size: 11px;
+            font-size: 11.5px;
             font-weight: 800;
-            padding: 3px 4px;
-            border-radius: 6px;
-            width: 92%;
+            padding: 4px 5px;
+            border-radius: 7px;
+            width: 94%;
             text-align: center;
             letter-spacing: -0.3px;
         }
@@ -741,45 +739,35 @@
 </head>
 <body>
     <div class="container">
-        <!-- 1. 상단 헤더 -->
-        <div class="app-header">
+        <!-- 최상단 일체형 헤더 바 (브랜드 + 오늘보기 + 잔여연차 + 조선택) -->
+        <header class="app-header">
             <div class="brand-box">
                 <div class="brand-logo">교대</div>
                 <div class="brand-title">교대근무</div>
             </div>
-            <div class="group-selector-wrap">
-                <button class="group-btn" id="btn-grp-A" onclick="setGroup('A')">A조</button>
-                <button class="group-btn" id="btn-grp-B" onclick="setGroup('B')">B조</button>
-                <button class="group-btn active" id="btn-grp-C" onclick="setGroup('C')">C조</button>
-            </div>
-        </div>
 
-        <!-- 오늘 내 근무 현황 카드 -->
-        <div class="today-card">
-            <div>
-                <div class="date-text" id="today-date-text">2026년 9월 16일 (수)</div>
-                <div class="shift-text">
-                    <span id="today-group-badge">C조</span>
-                    <span id="today-shift-badge">야간 2일차 🌙</span>
-                </div>
+            <!-- 중앙 퀵 칩: 오늘 보기 & 잔여 연차 -->
+            <div class="header-quick-chips">
+                <button class="header-chip today-chip" onclick="goToToday()">
+                    <span>📍 오늘</span>
+                </button>
+                <button class="header-chip leave-chip" onclick="switchView('leave')">
+                    <span>🏖️ <strong id="quick-remain-leave">0</strong>일</span>
+                </button>
             </div>
-            <button class="today-btn" onclick="goToToday()">오늘 보기</button>
-        </div>
+
+            <!-- 단일 콤팩트 조 선택기 (1가지만 보이는 드롭다운) -->
+            <div class="group-select-wrapper">
+                <select id="group-select" class="group-select" onchange="setGroup(this.value)">
+                    <option value="A">A조</option>
+                    <option value="B">B조</option>
+                    <option value="C" selected>C조</option>
+                </select>
+            </div>
+        </header>
 
         <!-- 1. 교대 캘린더 화면 -->
         <section id="view-calendar" class="view-page active">
-            <!-- 회계연도 연차 배너 -->
-            <div class="leave-banner" onclick="switchView('leave')">
-                <div>
-                    <div class="title">🏖️ 회계연도 기준 연차 현황 (터치하여 설정)</div>
-                    <div class="stats">잔여: <span id="banner-remain-leave">0</span>일 <span style="font-size:12px; font-weight:normal; opacity:0.9;">(총 <span id="banner-total-leave">0</span> / 사용 <span id="banner-used-leave">0</span>)</span></div>
-                </div>
-                <div class="sub">
-                    <div>미사용 연차수당</div>
-                    <div class="pay" id="banner-leave-pay">0원</div>
-                </div>
-            </div>
-
             <div class="month-bar">
                 <button class="nav-btn" onclick="changeMonth(-1)">◀</button>
                 <div class="month-title" id="cal-month-title">2026년 9월</div>
@@ -1382,8 +1370,10 @@
             const today = new Date();
             const weekNames = ['일', '월', '화', '수', '목', '금', '토'];
             const dateStr = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 (${weekNames[today.getDay()]})`;
-            document.getElementById('today-date-text').innerText = dateStr;
-            document.getElementById('today-group-badge').innerText = `${currentGroup}조`;
+            const dt = document.getElementById('today-date-text');
+            if (dt) dt.innerText = dateStr;
+            const gb = document.getElementById('today-group-badge');
+            if (gb) gb.innerText = `${currentGroup}조`;
 
             const shift = getActualShift(today, currentGroup);
             let icon = '☀️';
@@ -1391,7 +1381,8 @@
             else if (shift.type === 'OFF') icon = '🛌';
             else if (shift.type === 'LEAVE' || shift.type === 'HALF_LEAVE') icon = '🌴';
 
-            document.getElementById('today-shift-badge').innerText = `${shift.name} ${icon}`;
+            const sb = document.getElementById('today-shift-badge');
+            if (sb) sb.innerText = `${shift.name} ${icon}`;
         }
 
         // 오늘 보기 클릭 시 캘린더 탭 전환 및 당일 포커스 이동
@@ -1421,8 +1412,8 @@
 
         function setGroup(grp) {
             currentGroup = grp;
-            document.querySelectorAll('.group-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`btn-grp-${grp}`).classList.add('active');
+            const sel = document.getElementById('group-select');
+            if (sel) sel.value = grp;
             localStorage.setItem('shift_active_group', grp);
             renderCalendar();
             syncFromCalendar();
@@ -1517,10 +1508,17 @@
             const dailyRate = config.ordinaryHourly * 8;
             const totalLeavePay = remain * dailyRate;
 
-            document.getElementById('banner-total-leave').innerText = total;
-            document.getElementById('banner-used-leave').innerText = used;
-            document.getElementById('banner-remain-leave').innerText = remain;
-            document.getElementById('banner-leave-pay').innerText = `${fmt(totalLeavePay)}원`;
+            const qRemain = document.getElementById('quick-remain-leave');
+            if (qRemain) qRemain.innerText = remain;
+
+            const bTotal = document.getElementById('banner-total-leave');
+            if (bTotal) bTotal.innerText = total;
+            const bUsed = document.getElementById('banner-used-leave');
+            if (bUsed) bUsed.innerText = used;
+            const bRemain = document.getElementById('banner-remain-leave');
+            if (bRemain) bRemain.innerText = remain;
+            const bPay = document.getElementById('banner-leave-pay');
+            if (bPay) bPay.innerText = `${fmt(totalLeavePay)}원`;
 
             document.getElementById('input-total-leave').value = total;
             document.getElementById('stat-total-leave').innerText = `${total}일`;
@@ -1641,15 +1639,15 @@
             } else if (hy < 2018) {
                 el.value = "적용 (2018년 이전 입사자 수식)";
                 el.style.color = "#b45309";
-                if (lbl) lbl.innerText = "기타지급액";
+                if (lbl) lbl.innerText = "기타지급액 (2018년 이전)";
             } else if (hy < 2020) {
                 el.value = "적용 (2018~2019년 입사자 수식)";
                 el.style.color = "#b45309";
-                if (lbl) lbl.innerText = "기타지급액";
+                if (lbl) lbl.innerText = "기타지급액 (2018~2019년)";
             } else {
                 el.value = "미적용 (2020년 이후 입사자)";
                 el.style.color = "#64748b";
-                if (lbl) lbl.innerText = "기타지급액";
+                if (lbl) lbl.innerText = "기타지급액 (2020년 이후 0원)";
             }
         }
 
@@ -1751,6 +1749,7 @@
             const holOtPay = Math.round(B8 * 2.0 * 2.5 * (E4 + E5));
             const holNightPay = Math.round(B8 * 0.5 * 7.0 * E5);
 
+            // 1. 입사년월일 기준 분석 (1년 미만 여부 & 입사년도 분류)
             const hireVal = config.hireDate;
             let isUnderOneYear = false;
             let hireYear = 0;
@@ -1762,6 +1761,7 @@
                 const hd = parseInt(parts[2], 10);
                 hireYear = hy;
 
+                // 현재 조회 급여월 산정 마감일 (예: 2026-09-15)
                 const currentPayYear = currentPayDate.getFullYear();
                 const currentPayMonth = currentPayDate.getMonth() + 1;
                 const payEndDate = new Date(currentPayYear, currentPayMonth - 1, 15);
@@ -1772,15 +1772,21 @@
                 }
             }
 
+            // 2. 기타지급액 산정 (입사년도 3대 구간 분기)
             let otherPay = 0;
             if (applyRetro && hireYear > 0) {
                 if (hireYear < 2018) {
+                    // [조건 1] 2018년 이전 입사자 (구법/소급 수식)
                     const diff1 = ((B8 * 1.5 * 2.5 * E2) + (B8 * 1.5 * 3 * E3)) - (B8 * 1.5 * 2.5 * (E2 + E3));
                     const diff2 = ((B8 * 2 * 2.5 * E4) + (B8 * 2 * 3 * E5)) - (B8 * 2 * 2.5 * (E4 + E5));
                     const diff3 = (B8 * 0.5 * 8 * E5) - (B8 * 0.5 * 7 * E5);
                     const diff4 = (B8 * 0.5 * 8 * E3) - (B8 * 0.5 * 7 * E3);
                     otherPay = Math.round(diff1 + diff2 + diff3 + diff4);
                 } else if (hireYear < 2020) {
+                    // [조건 2] 2018년~2020년 이전 입사자 (2018, 2019)
+                    // 수식: =(B10*0.5*8*B17)+(B10*0.5*8*B15)+(B10*0.5*8*B19)+(B10*0.5*8*B21)-(N8+N11)
+                    // B10: 통상시급(B8), B17: 야간(E3), B15: 주간(E2), B19: 주특(E4), B21: 야특(E5)
+                    // N8: 야간수당(nightPay), N11: 휴일야간수당(holNightPay)
                     const B10 = B8;
                     const B17 = E5;
                     const B15 = E3;
@@ -1790,10 +1796,12 @@
                     const N11 = holNightPay;
                     otherPay = Math.round((B10 * 0.5 * 8 * B17) + (B10 * 0.5 * 8 * B15) + (B10 * 0.5 * 8 * B19) + (B10 * 0.5 * 8 * B21) - (N8 + N11));
                 } else {
+                    // [조건 3] 2020년 이후 입사자: 기타지급액 없음
                     otherPay = 0;
                 }
             }
 
+            // 3. 상여금 및 1년 미만 신입 지원금 (조건 4)
             let bonusPay = 0;
             let entryBonus = 0;
 
@@ -1802,6 +1810,7 @@
             const bonusBadge = document.getElementById('bonus-badge');
 
             if (isUnderOneYear) {
+                // 1년 미만: 짝수달 상여금 없음, 매월 300,000원 신입 지원금 지급
                 bonusPay = 0;
                 entryBonus = 300000;
 
@@ -1814,6 +1823,7 @@
                     bonusBadge.style.color = '#db2777';
                 }
             } else {
+                // 1년 이상: 정상 짝수달 상여금 지급 (기본급 50% + 근속수당)
                 entryBonus = 0;
                 if (hasBonusCheck) {
                     bonusPay = Math.round(basicPay * 0.5) + seniorityPay;
@@ -1854,31 +1864,7 @@
         }
 
         function loadConfig() {
-            const legacyKeys = [
-                'shift_salary_config_v17',
-                'shift_salary_config_v16',
-                'shift_salary_config_v15',
-                'shift_salary_config_v14',
-                'shift_salary_config_v13',
-                'shift_salary_config_v12',
-                'shift_salary_config_v11',
-                'shift_salary_config_v10',
-                'shift_salary_config_v9',
-                'shift_salary_config'
-            ];
-
-            let saved = localStorage.getItem('shift_salary_config_master');
-            if (!saved) {
-                for (const k of legacyKeys) {
-                    const old = localStorage.getItem(k);
-                    if (old) {
-                        saved = old;
-                        localStorage.setItem('shift_salary_config_master', old);
-                        break;
-                    }
-                }
-            }
-
+            const saved = localStorage.getItem('shift_salary_config_v17');
             if (saved) {
                 try { config = { ...config, ...JSON.parse(saved) }; } catch (e) {}
             }
@@ -1902,7 +1888,7 @@
         }
 
         function saveConfig() {
-            localStorage.setItem('shift_salary_config_master', JSON.stringify(config));
+            localStorage.setItem('shift_salary_config_v17', JSON.stringify(config));
         }
 
         function resetDefaults() {
@@ -1918,7 +1904,7 @@
                     applyRetroPay: false,
                     holidayBonus: 0
                 };
-                localStorage.removeItem('shift_salary_config_master');
+                localStorage.removeItem('shift_salary_config_v17');
                 localStorage.removeItem('shift_day_memos');
                 dayMemos = {};
                 loadConfig();
@@ -1931,6 +1917,7 @@
             }
         }
 
+        // --- 뷰 전환 (하단 탭 바 연동) ---
         function switchView(viewName) {
             document.querySelectorAll('.view-page').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -1954,9 +1941,9 @@
             const savedGroup = localStorage.getItem('shift_active_group');
             if (savedGroup && ['A', 'B', 'C'].includes(savedGroup)) {
                 currentGroup = savedGroup;
-                document.querySelectorAll('.group-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById(`btn-grp-${savedGroup}`).classList.add('active');
             }
+            const sel = document.getElementById('group-select');
+            if (sel) sel.value = currentGroup;
 
             loadConfig();
             loadOverrides();
