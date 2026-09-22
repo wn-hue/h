@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>교대근무 - 교대 캘린더 & 급여 계산기</title>
 
+    <!-- iOS Safari & Android 홈 화면 추가 (단독 PWA 앱 규격) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="교대근무">
@@ -25,7 +26,7 @@
             --day-bg: #e8f0fe;
             --night-color: #6b21a8;
             --night-bg: #f3e8ff;
-            --off-color: #d93025;
+            --off-color: #d93025; /* 휴무 글씨 빨간색 강조 */
             --off-bg: #fef2f2;
             --off-border: #fee2e2;
             --special-color: #b45309;
@@ -64,6 +65,7 @@
             padding: 8px 12px;
         }
 
+        /* 최상단 헤더 바 */
         .app-header {
             display: flex;
             align-items: center;
@@ -162,6 +164,7 @@
             pointer-events: none;
         }
 
+        /* 캘린더 상단 탑바 */
         .gcal-topbar {
             display: flex;
             justify-content: space-between;
@@ -215,8 +218,14 @@
             transition: background 0.15s ease;
         }
 
-        .month-title-btn:active { background: #e8eaed; }
-        .month-title-btn .dropdown-arrow { font-size: 12px; color: #5f6368; }
+        .month-title-btn:active {
+            background: #e8eaed;
+        }
+
+        .month-title-btn .dropdown-arrow {
+            font-size: 12px;
+            color: #5f6368;
+        }
 
         .gcal-nav-group {
             display: flex;
@@ -240,6 +249,7 @@
         .gcal-chip-btn.stat-btn { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
         .gcal-chip-btn.today-btn { background: #e8f0fe; color: #1a73e8; border-color: #c2e7ff; }
 
+        /* 캘린더 그리드 */
         .calendar-card {
             background: #ffffff;
             border-radius: 14px;
@@ -322,6 +332,7 @@
             margin-bottom: 3px;
         }
 
+        /* 교대근무 뱃지 */
         .shift-badge {
             font-size: 11.5px;
             font-weight: 700;
@@ -371,6 +382,7 @@
             border: 1px solid #feefc3;
         }
 
+        /* 공통 카드 및 폼 */
         .card {
             background: #ffffff;
             border-radius: 12px;
@@ -464,6 +476,7 @@
             font-weight: 700;
         }
 
+        /* 2열 폼 그리드 */
         .two-cols {
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -610,6 +623,7 @@
             cursor: pointer;
         }
 
+        /* 하단 네비게이션 바 */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -644,6 +658,7 @@
         .nav-item .nav-emoji { font-size: 20px; }
         .nav-item.active { color: var(--primary); }
 
+        /* 모달 공통 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -681,6 +696,7 @@
             align-items: center;
         }
 
+        /* 연/월 선택 피커 모달 */
         .picker-year-bar {
             display: flex;
             align-items: center;
@@ -744,6 +760,7 @@
             box-shadow: 0 2px 6px rgba(26, 115, 232, 0.35);
         }
 
+        /* 근무 변경 모달 버튼 그리드 */
         .modal-btn-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -775,6 +792,7 @@
         .opt-btn.off { color: var(--off-color); border-color: #fee2e2; background: #fef2f2; }
         .opt-btn.reset { color: #64748b; grid-column: span 2; }
 
+        /* 월 통계 팝업 모달 그리드 */
         .month-stat-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -805,6 +823,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- 최상단 헤더 바 -->
         <header class="app-header">
             <div class="brand-box">
                 <div class="brand-logo">교대</div>
@@ -816,7 +835,7 @@
                     <span>📍 오늘</span>
                 </button>
                 <button class="header-chip leave-chip" onclick="switchView('leave')">
-                    <span>🏖️ 잔여: <strong id="quick-remain-leave">0</strong>일</span>
+                    <span>🏖️ 잔여연차: <strong id="quick-remain-leave">0</strong>일</span>
                 </button>
             </div>
 
@@ -1273,30 +1292,69 @@
             '2027-09-14', '2027-09-15', '2027-09-16'
         ]);
 
+        // 관공서의 공휴일에 관한 규정 기준 정정 완료 (2025 ~ 2027)
         const HOLIDAYS = {
-            '2025-01-01': { name: '신정' }, '2025-01-28': { name: '설날연휴' }, '2025-01-29': { name: '설날' },
-            '2025-01-30': { name: '설날연휴' }, '2025-03-01': { name: '삼일절' }, '2025-03-03': { name: '대체공휴일' },
-            '2025-05-05': { name: '어린이날' }, '2025-05-06': { name: '부처님오신날' }, '2025-06-06': { name: '현충일' },
-            '2025-08-15': { name: '광복절' }, '2025-10-03': { name: '개천절' }, '2025-10-05': { name: '추석연휴' },
-            '2025-10-06': { name: '추석' }, '2025-10-07': { name: '추석연휴' }, '2025-10-08': { name: '대체공휴일' },
-            '2025-10-09': { name: '한글날' }, '2025-12-25': { name: '성탄절' },
+            // 2025년
+            '2025-01-01': { name: '신정' },
+            '2025-01-28': { name: '설날연휴' },
+            '2025-01-29': { name: '설날' },
+            '2025-01-30': { name: '설날연휴' },
+            '2025-03-01': { name: '삼일절' },
+            '2025-03-03': { name: '대체공휴일' },
+            '2025-05-05': { name: '어린이날·부처님오신날' },
+            '2025-05-06': { name: '대체공휴일' },
+            '2025-06-06': { name: '현충일' },
+            '2025-08-15': { name: '광복절' },
+            '2025-10-03': { name: '개천절' },
+            '2025-10-05': { name: '추석연휴' },
+            '2025-10-06': { name: '추석' },
+            '2025-10-07': { name: '추석연휴' },
+            '2025-10-08': { name: '대체공휴일' },
+            '2025-10-09': { name: '한글날' },
+            '2025-12-25': { name: '성탄절' },
 
-            '2026-01-01': { name: '신정' }, '2026-02-16': { name: '설날연휴' }, '2026-02-17': { name: '설날' },
-            '2026-02-18': { name: '설날연휴' }, '2026-03-01': { name: '삼일절' }, '2026-03-02': { name: '대체공휴일' },
-            '2026-05-05': { name: '어린이날' }, '2026-05-24': { name: '부처님오신날' }, '2026-05-25': { name: '대체공휴일' },
-            '2026-06-06': { name: '현충일' }, '2026-08-15': { name: '광복절' }, '2026-08-17': { name: '대체공휴일' },
-            '2026-09-24': { name: '추석연휴' }, '2026-09-25': { name: '추석' }, '2026-09-26': { name: '추석연휴' },
-            '2026-09-28': { name: '대체공휴일' }, '2026-10-03': { name: '개천절' }, '2026-10-05': { name: '대체공휴일' },
-            '2026-10-09': { name: '한글날' }, '2026-12-25': { name: '성탄절' },
+            // 2026년
+            '2026-01-01': { name: '신정' },
+            '2026-02-16': { name: '설날연휴' },
+            '2026-02-17': { name: '설날' },
+            '2026-02-18': { name: '설날연휴' },
+            '2026-03-01': { name: '삼일절' },
+            '2026-03-02': { name: '대체공휴일' },
+            '2026-05-05': { name: '어린이날' },
+            '2026-05-24': { name: '부처님오신날' },
+            '2026-05-25': { name: '대체공휴일' },
+            '2026-06-06': { name: '현충일' },
+            '2026-08-15': { name: '광복절' },
+            '2026-08-17': { name: '대체공휴일' },
+            '2026-09-24': { name: '추석연휴' },
+            '2026-09-25': { name: '추석' },
+            '2026-09-26': { name: '추석연휴' },
+            '2026-10-03': { name: '개천절' },
+            '2026-10-05': { name: '대체공휴일' },
+            '2026-10-09': { name: '한글날' },
+            '2026-12-25': { name: '성탄절' },
 
-            '2027-01-01': { name: '신정' }, '2027-02-06': { name: '설날연휴' }, '2027-02-07': { name: '설날' },
-            '2027-02-08': { name: '설날연휴' }, '2027-02-09': { name: '대체공휴일' }, '2027-03-01': { name: '삼일절' },
-            '2027-05-05': { name: '어린이날' }, '2027-05-13': { name: '부처님오신날' }, '2027-06-06': { name: '현충일' },
-            '2027-06-07': { name: '대체공휴일' }, '2027-08-15': { name: '광복절' }, '2027-08-16': { name: '대체공휴일' },
-            '2027-09-14': { name: '추석연휴' }, '2027-09-15': { name: '추석' }, '2027-09-16': { name: '추석연휴' },
-            '2027-09-17': { name: '대체공휴일' }, '2027-10-01': { name: '국군의날' }, '2027-10-03': { name: '개천절' },
-            '2027-10-04': { name: '대체공휴일' }, '2027-10-09': { name: '한글날' }, '2027-10-11': { name: '대체공휴일' },
-            '2027-12-25': { name: '성탄절' }
+            // 2027년
+            '2027-01-01': { name: '신정' },
+            '2027-02-06': { name: '설날연휴' },
+            '2027-02-07': { name: '설날' },
+            '2027-02-08': { name: '설날연휴' },
+            '2027-02-09': { name: '대체공휴일' },
+            '2027-03-01': { name: '삼일절' },
+            '2027-05-05': { name: '어린이날' },
+            '2027-05-13': { name: '부처님오신날' },
+            '2027-06-06': { name: '현충일' },
+            '2027-08-15': { name: '광복절' },
+            '2027-08-16': { name: '대체공휴일' },
+            '2027-09-14': { name: '추석연휴' },
+            '2027-09-15': { name: '추석' },
+            '2027-09-16': { name: '추석연휴' },
+            '2027-10-03': { name: '개천절' },
+            '2027-10-04': { name: '대체공휴일' },
+            '2027-10-09': { name: '한글날' },
+            '2027-10-11': { name: '대체공휴일' },
+            '2027-12-25': { name: '성탄절' },
+            '2027-12-27': { name: '대체공휴일' }
         };
 
         let currentGroup = 'C';
@@ -1690,7 +1748,6 @@
             onHireDateChange();
         }
 
-        // 해당 회계연도에 속한 연차만 정확히 필터링 집계
         function updateLeaveStats() {
             let used = 0;
             const currentYearStr = currentCalDate.getFullYear().toString();
@@ -1796,7 +1853,6 @@
             dayMemos = savedMemos ? JSON.parse(savedMemos) : {};
         }
 
-        // 토글 박스 클릭 이벤트 버블링 방어
         function toggleRetroCheck(e) {
             const chk = document.getElementById('inp-retro-check');
             if (e && e.target !== chk) {
@@ -1846,7 +1902,6 @@
             syncFromCalendar();
         }
 
-        // 캘린더 동기화 시 반차(HALF_LEAVE) 반영
         function syncFromCalendar() {
             const year = currentPayDate.getFullYear();
             const month = currentPayDate.getMonth();
@@ -1880,7 +1935,7 @@
                 } else if (shift.type === 'HALF_LEAVE') {
                     if (shift.origType === 'NIGHT') E3 += 0.5;
                     else E2 += 0.5;
-                    noOtDays += 0.5; // 반차 4시간 근무 시 연장 2.5h 제외
+                    noOtDays += 0.5;
                 }
                 curr.setDate(curr.getDate() + 1);
             }
