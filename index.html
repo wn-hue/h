@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>교대근무 - 교대 캘린더 & 급여 계산기</title>
 
-    <!-- iOS Safari & Android 홈 화면 추가 (단독 PWA 앱 규격) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="교대근무">
@@ -26,7 +25,7 @@
             --day-bg: #e8f0fe;
             --night-color: #6b21a8;
             --night-bg: #f3e8ff;
-            --off-color: #d93025; /* 휴무 글씨 빨간색 강조 */
+            --off-color: #d93025;
             --off-bg: #fef2f2;
             --off-border: #fee2e2;
             --special-color: #b45309;
@@ -65,7 +64,6 @@
             padding: 8px 12px;
         }
 
-        /* 최상단 헤더 바 */
         .app-header {
             display: flex;
             align-items: center;
@@ -164,7 +162,6 @@
             pointer-events: none;
         }
 
-        /* 캘린더 상단 탑바 */
         .gcal-topbar {
             display: flex;
             justify-content: space-between;
@@ -218,14 +215,8 @@
             transition: background 0.15s ease;
         }
 
-        .month-title-btn:active {
-            background: #e8eaed;
-        }
-
-        .month-title-btn .dropdown-arrow {
-            font-size: 12px;
-            color: #5f6368;
-        }
+        .month-title-btn:active { background: #e8eaed; }
+        .month-title-btn .dropdown-arrow { font-size: 12px; color: #5f6368; }
 
         .gcal-nav-group {
             display: flex;
@@ -249,7 +240,6 @@
         .gcal-chip-btn.stat-btn { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
         .gcal-chip-btn.today-btn { background: #e8f0fe; color: #1a73e8; border-color: #c2e7ff; }
 
-        /* 캘린더 그리드 */
         .calendar-card {
             background: #ffffff;
             border-radius: 14px;
@@ -332,7 +322,6 @@
             margin-bottom: 3px;
         }
 
-        /* 교대근무 뱃지 */
         .shift-badge {
             font-size: 11.5px;
             font-weight: 700;
@@ -382,7 +371,6 @@
             border: 1px solid #feefc3;
         }
 
-        /* 공통 카드 및 폼 */
         .card {
             background: #ffffff;
             border-radius: 12px;
@@ -476,7 +464,6 @@
             font-weight: 700;
         }
 
-        /* 2열 폼 그리드 */
         .two-cols {
             display: grid;
             grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -542,9 +529,10 @@
             border: 1px solid var(--border);
             margin-bottom: 10px;
             cursor: pointer;
+            user-select: none;
         }
 
-        .toggle-box label { font-size: 13px; font-weight: 700; cursor: pointer; }
+        .toggle-box label { font-size: 13px; font-weight: 700; cursor: pointer; pointer-events: none; }
         .toggle-box input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); cursor: pointer; }
 
         .view-page { display: none; }
@@ -622,7 +610,6 @@
             cursor: pointer;
         }
 
-        /* 하단 네비게이션 바 */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -657,7 +644,6 @@
         .nav-item .nav-emoji { font-size: 20px; }
         .nav-item.active { color: var(--primary); }
 
-        /* 모달 공통 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -695,7 +681,6 @@
             align-items: center;
         }
 
-        /* 연/월 선택 피커 모달 */
         .picker-year-bar {
             display: flex;
             align-items: center;
@@ -759,7 +744,6 @@
             box-shadow: 0 2px 6px rgba(26, 115, 232, 0.35);
         }
 
-        /* 근무 변경 모달 버튼 그리드 */
         .modal-btn-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -791,7 +775,6 @@
         .opt-btn.off { color: var(--off-color); border-color: #fee2e2; background: #fef2f2; }
         .opt-btn.reset { color: #64748b; grid-column: span 2; }
 
-        /* 월 통계 팝업 모달 그리드 */
         .month-stat-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -822,7 +805,6 @@
 </head>
 <body>
     <div class="container">
-        <!-- 최상단 헤더 바 -->
         <header class="app-header">
             <div class="brand-box">
                 <div class="brand-logo">교대</div>
@@ -864,7 +846,6 @@
                 </div>
             </div>
 
-            <!-- 캘린더 그리드 -->
             <div class="calendar-card">
                 <div class="cal-weekdays">
                     <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
@@ -912,11 +893,11 @@
                 <div class="two-cols">
                     <div class="input-group">
                         <label>주간 근무일수</label>
-                        <input type="number" id="inp-day-days" value="0" min="0" oninput="calculatePayrollFromInputs()">
+                        <input type="number" id="inp-day-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()">
                     </div>
                     <div class="input-group">
                         <label>야간 근무일수</label>
-                        <input type="number" id="inp-night-days" value="0" min="0" oninput="calculatePayrollFromInputs()">
+                        <input type="number" id="inp-night-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()">
                     </div>
                 </div>
                 <div class="two-cols">
@@ -931,8 +912,8 @@
                 </div>
                 <div class="two-cols">
                     <div class="input-group">
-                        <label>O.T 해제 및 연차 일수 (2.5h 제외)</label>
-                        <input type="number" id="inp-no-ot-days" value="0" min="0" oninput="calculatePayrollFromInputs()">
+                        <label>O.T 해제 일수 (2.5h 제외)</label>
+                        <input type="number" id="inp-no-ot-days" value="0" min="0" step="0.5" oninput="calculatePayrollFromInputs()">
                     </div>
                     <div class="input-group">
                         <label>실제 적용 연장시간 (1.5배)</label>
@@ -951,12 +932,12 @@
                     </div>
                 </div>
 
-                <div class="toggle-box" onclick="toggleBonusCheck()">
-                    <label for="inp-bonus-check" id="lbl-bonus-check">짝수달 상여금 50% 지급 (근속수당 가산)</label>
+                <div class="toggle-box" onclick="toggleBonusCheck(event)">
+                    <label id="lbl-bonus-check">짝수달 상여금 50% 지급 (근속수당 가산)</label>
                     <input type="checkbox" id="inp-bonus-check" onchange="calculatePayrollFromInputs()">
                 </div>
-                <div class="toggle-box" onclick="toggleRetroCheck()">
-                    <label for="inp-retro-check" id="lbl-retro-check">기타지급액 적용 (입사년도 기준 자동 산정)</label>
+                <div class="toggle-box" onclick="toggleRetroCheck(event)">
+                    <label id="lbl-retro-check">기타지급액 적용 (입사년도 기준 자동 산정)</label>
                     <input type="checkbox" id="inp-retro-check" onchange="calculatePayrollFromInputs()">
                 </div>
 
@@ -1011,7 +992,6 @@
                     <span style="font-size: 11px; color: var(--leave-color); font-weight: bold;">매년 1월 1일 정산</span>
                 </div>
 
-                <!-- 1. 입사년월일 & 총 부여 연차 입력 그룹 -->
                 <div class="two-cols">
                     <div class="input-group">
                         <label>입사년월일 선택</label>
@@ -1023,12 +1003,10 @@
                     </div>
                 </div>
 
-                <!-- 2. 연차 계산 안내 박스 -->
                 <div class="info-card" id="leave-calc-info-box">
-                    📅 <strong>회계연도 기준(매년 1월 1일 정산):</strong> 전사원 일괄 정산되는 회계일 기준 연차 공식이 적용됩니다.
+                    📅 <strong>회계연도 기준(매년 1월 1일 정산):</strong> 입사일을 선택하면 자동 계산됩니다.
                 </div>
 
-                <!-- 3. 연차 현황 3단 통계 카드 -->
                 <div class="leave-stat-grid">
                     <div class="leave-stat-box">
                         <div class="stat-label">총 연차</div>
@@ -1044,7 +1022,6 @@
                     </div>
                 </div>
 
-                <!-- 4. 미사용 예상 연차수당 박스 -->
                 <div style="background: #e6f4ea; border: 1px solid #ceead6; border-radius: 12px; padding: 14px; margin-top: 14px;">
                     <div style="font-size: 12px; color: #137333; margin-bottom: 6px;">미사용 연차수당 공식: 8시간 × 통상시급 × 잔여일수</div>
                     <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 6px;">
@@ -1105,7 +1082,7 @@
                 <div style="font-size: 12px; color: var(--text-sub); line-height: 1.65;">
                     • <strong>회계연도 기준(매년 1월 1일):</strong> 전사원이 동일하게 매년 1월 1일 기준으로 연차가 일괄 정산 및 부여됩니다.<br>
                     • <strong>1년 미만 신입사원:</strong> 짝수달 상여금(50%) 대신 매월 300,000원의 신입 지원금이 지급됩니다.<br>
-                    • <strong>월급일 및 명세서:</strong> 25일이 공휴일/주말일 경우 전날 입금되며, 명세서는 입금일 하루 전날 자동 발송 알림이 표시됩니다.<br>
+                    • <strong>월급일 및 명세서:</strong> 25일이 공휴일/주말일 경우 직전 영업일에 입금되며, 명세서는 입금일 하루 전 영업일에 발송 알림이 표시됩니다.<br>
                     • <strong>저장 및 초기화:</strong> 입력하신 모든 시급, 연차, 수당, 메모 설정은 💾 [설정 저장] 버튼을 통해 브라우저에 안전하게 보존됩니다.
                 </div>
             </div>
@@ -1128,7 +1105,7 @@
         </button>
     </nav>
 
-    <!-- [신규 기능] 월급 명세서 받는 날 당일 1회 알림 팝업 모달 -->
+    <!-- 모달: 월급 명세서 알림 -->
     <div class="modal-overlay" id="modal-payslip-alert" onclick="closePayslipModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div style="text-align:center; margin-bottom:14px;">
@@ -1173,7 +1150,7 @@
         </div>
     </div>
 
-    <!-- 1. 구글 캘린더 스타일 연/월 선택 피커 모달 -->
+    <!-- 모달: 연/월 선택 피커 -->
     <div class="modal-overlay" id="modal-year-month-picker" onclick="closeYearMonthPicker(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-title">
@@ -1193,7 +1170,7 @@
         </div>
     </div>
 
-    <!-- 2. 이 달 근무/휴무 통계 팝업 모달 -->
+    <!-- 모달: 월 근무/휴무 통계 -->
     <div class="modal-overlay" id="modal-month-stats" onclick="closeMonthStatsModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-title">
@@ -1230,7 +1207,7 @@
         </div>
     </div>
 
-    <!-- 3. 근태 및 메모 변경 모달 시트 -->
+    <!-- 모달: 근태 및 메모 변경 -->
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-title">
@@ -1258,11 +1235,11 @@
                 </button>
                 <button class="opt-btn leave" onclick="setDayOverride('LEAVE')">
                     <span>🌴 연차</span>
-                    <span style="font-size:10px; opacity:0.8;">-1일 (2.5h OT 제외)</span>
+                    <span style="font-size:10px; opacity:0.8;">-1일 (출근 면제)</span>
                 </button>
                 <button class="opt-btn half" onclick="setDayOverride('HALF_LEAVE')">
                     <span>⏱️ 반차</span>
-                    <span style="font-size:10px; opacity:0.8;">-0.5일 (2.5h OT 제외)</span>
+                    <span style="font-size:10px; opacity:0.8;">-0.5일 (4h 근무, 2.5h OT 제외)</span>
                 </button>
                 <button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
                     <span>⏹️ O.T 해제</span>
@@ -1352,13 +1329,12 @@
 
         function isHolidayOrWeekend(d) {
             const day = d.getDay();
-            if (day === 0 || day === 6) return true; // 토요일, 일요일
+            if (day === 0 || day === 6) return true;
             const key = toDateKey(d.getFullYear(), d.getMonth(), d.getDate());
-            if (HOLIDAYS[key] || SHUTDOWN_DAYS.has(key)) return true; // 공휴일 또는 셧다운일
+            if (HOLIDAYS[key] || SHUTDOWN_DAYS.has(key)) return true;
             return false;
         }
 
-        // 월급일 및 명세서 수령일 계산 엔진 (공휴일/주말 조기 지급 규칙)
         function getPaydayAndSlipDate(year, month) {
             let payday = new Date(year, month, 25);
             while (isHolidayOrWeekend(payday)) {
@@ -1418,11 +1394,11 @@
                 const ov = overrides[dateStr];
                 if (ov === 'SPECIAL_DAY') return { type: 'SPECIAL_DAY', name: '주특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'SPECIAL_NIGHT') return { type: 'SPECIAL_NIGHT', name: '야특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
-                if (ov === 'LEAVE') return { type: 'LEAVE', name: '연차', isLeave: true, leaveVal: 1.0, hasOt: false, holidayName: holiday ? holiday.name : '' };
-                if (ov === 'HALF_LEAVE') return { type: 'HALF_LEAVE', name: '반차', isLeave: true, leaveVal: 0.5, hasOt: false, holidayName: holiday ? holiday.name : '' };
+                if (ov === 'LEAVE') return { type: 'LEAVE', name: '연차', isLeave: true, leaveVal: 1.0, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
+                if (ov === 'HALF_LEAVE') return { type: 'HALF_LEAVE', name: '반차', isLeave: true, leaveVal: 0.5, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'NO_OT') return { type: 'NO_OT', name: base.type === 'NIGHT' ? '야간' : '주간', subName: 'O.T해제', isNoOt: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
-                if (ov === 'UNPAID_OFF') return { type: 'UNPAID_OFF', name: '무급', isUnpaid: true, hasOt: false, holidayName: holiday ? holiday.name : '' };
-                if (ov === 'FORCED_OFF') return { type: 'OFF', name: '휴무', isOff: true, hasOt: false, holidayName: holiday ? holiday.name : '' };
+                if (ov === 'UNPAID_OFF') return { type: 'UNPAID_OFF', name: '무급', isUnpaid: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
+                if (ov === 'FORCED_OFF') return { type: 'OFF', name: '휴무', isOff: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
             }
 
             if (base.type === 'OFF') {
@@ -1482,6 +1458,8 @@
                 } else if (shift.type === 'HALF_LEAVE') {
                     counts.leave += 0.5;
                     counts.totalWork += 0.5;
+                    if (shift.origType === 'NIGHT') counts.night += 0.5;
+                    else counts.day += 0.5;
                 }
 
                 const cell = document.createElement('div');
@@ -1638,12 +1616,14 @@
             const sel = document.getElementById('group-select');
             if (sel) sel.value = grp;
             localStorage.setItem('shift_active_group', grp);
+            loadOverrides();
             renderCalendar();
             syncFromCalendar();
         }
 
+        // 근로기준법 제60조 제4항 (3년 이상 근속 시 매 2년마다 1일 가산) 반영
         function calculateFiscalYearLeave(hireDateStr, targetYear) {
-            if (!targetYear) targetYear = 2026;
+            if (!targetYear) targetYear = currentCalDate.getFullYear();
             if (!hireDateStr) return { leave: 0, desc: "입사년월일을 입력하시면 회계일 기준 연차가 자동 계산됩니다." };
 
             const parts = hireDateStr.split('-');
@@ -1667,7 +1647,7 @@
                 leaveDays = parseFloat((15 * (monthsWorked / 12)).toFixed(1));
                 desc = `회계연도 기준 1년차 정산: 전년도 ${monthsWorked}개월 근무 비례연차 ${leaveDays}일`;
             } else {
-                let added = Math.max(0, Math.floor((tenureYears - 3) / 2));
+                let added = Math.max(0, Math.floor((tenureYears - 2) / 2));
                 leaveDays = Math.min(25, 15 + added);
                 desc = `회계연도 기준 근속 ${tenureYears}년차 정기부여: 기본 15일 + 근속가산 ${added}일 = ${leaveDays}일`;
             }
@@ -1681,7 +1661,7 @@
             document.getElementById('input-hire-date').value = hireVal;
             document.getElementById('inp-hire-date').value = hireVal;
 
-            const res = calculateFiscalYearLeave(hireVal, 2026);
+            const res = calculateFiscalYearLeave(hireVal, currentCalDate.getFullYear());
             config.totalLeave = res.leave;
             document.getElementById('input-total-leave').value = res.leave;
 
@@ -1710,11 +1690,16 @@
             onHireDateChange();
         }
 
+        // 해당 회계연도에 속한 연차만 정확히 필터링 집계
         function updateLeaveStats() {
             let used = 0;
-            Object.values(overrides).forEach(val => {
-                if (val === 'LEAVE') used += 1.0;
-                else if (val === 'HALF_LEAVE') used += 0.5;
+            const currentYearStr = currentCalDate.getFullYear().toString();
+
+            Object.entries(overrides).forEach(([dateStr, val]) => {
+                if (dateStr.startsWith(currentYearStr)) {
+                    if (val === 'LEAVE') used += 1.0;
+                    else if (val === 'HALF_LEAVE') used += 0.5;
+                }
             });
 
             const total = config.totalLeave;
@@ -1745,6 +1730,7 @@
             config.baseHours = parseFloat(document.getElementById('input-base-hours').value) || 209;
             config.dutyPay = parseFloat(document.getElementById('input-duty-pay').value) || 0;
             config.seniorityPay = parseFloat(document.getElementById('input-seniority-pay').value) || 0;
+            config.holidayBonus = parseFloat(document.getElementById('inp-holiday-bonus').value) || 0;
             saveConfig();
             updateLeaveStats();
             calculatePayrollFromInputs();
@@ -1810,13 +1796,24 @@
             dayMemos = savedMemos ? JSON.parse(savedMemos) : {};
         }
 
-        function toggleRetroCheck() {
+        // 토글 박스 클릭 이벤트 버블링 방어
+        function toggleRetroCheck(e) {
             const chk = document.getElementById('inp-retro-check');
-            chk.checked = !chk.checked;
+            if (e && e.target !== chk) {
+                chk.checked = !chk.checked;
+            }
             config.applyRetroPay = chk.checked;
             const hy = config.hireDate ? parseInt(config.hireDate.split('-')[0], 10) : null;
             updateRetroStatusText(chk.checked ? hy : -1);
             saveConfig();
+            calculatePayrollFromInputs();
+        }
+
+        function toggleBonusCheck(e) {
+            const chk = document.getElementById('inp-bonus-check');
+            if (e && e.target !== chk) {
+                chk.checked = !chk.checked;
+            }
             calculatePayrollFromInputs();
         }
 
@@ -1849,6 +1846,7 @@
             syncFromCalendar();
         }
 
+        // 캘린더 동기화 시 반차(HALF_LEAVE) 반영
         function syncFromCalendar() {
             const year = currentPayDate.getFullYear();
             const month = currentPayDate.getMonth();
@@ -1867,14 +1865,22 @@
             let curr = new Date(startDate.getTime());
             while (curr <= endDate) {
                 const shift = getActualShift(curr, currentGroup);
-                if (shift.type === 'DAY') E2++;
-                else if (shift.type === 'NIGHT') E3++;
-                else if (shift.type === 'SPECIAL_DAY') E4++;
-                else if (shift.type === 'SPECIAL_NIGHT') E5++;
-                else if (shift.type === 'NO_OT') {
+                if (shift.type === 'DAY') {
+                    E2++;
+                } else if (shift.type === 'NIGHT') {
+                    E3++;
+                } else if (shift.type === 'SPECIAL_DAY') {
+                    E4++;
+                } else if (shift.type === 'SPECIAL_NIGHT') {
+                    E5++;
+                } else if (shift.type === 'NO_OT') {
                     if (shift.origType === 'NIGHT') E3++;
                     else E2++;
                     noOtDays++;
+                } else if (shift.type === 'HALF_LEAVE') {
+                    if (shift.origType === 'NIGHT') E3 += 0.5;
+                    else E2 += 0.5;
+                    noOtDays += 0.5; // 반차 4시간 근무 시 연장 2.5h 제외
                 }
                 curr.setDate(curr.getDate() + 1);
             }
@@ -1886,12 +1892,6 @@
             document.getElementById('inp-no-ot-days').value = noOtDays;
 
             document.getElementById('inp-bonus-check').checked = (payMonthNum % 2 === 0);
-            calculatePayrollFromInputs();
-        }
-
-        function toggleBonusCheck() {
-            const chk = document.getElementById('inp-bonus-check');
-            chk.checked = !chk.checked;
             calculatePayrollFromInputs();
         }
 
@@ -2015,7 +2015,6 @@
             document.getElementById('row-gross-pay').innerText = fmt(grandGross);
         }
 
-        /* [신규 기능] 월급명세서 수령일 당일 1회 알림 팝업 제어 */
         function checkPayslipPopup() {
             const today = new Date();
             const curYear = today.getFullYear();
@@ -2025,7 +2024,6 @@
             const { payday, slipDate } = getPaydayAndSlipDate(curYear, curMonth);
             const slipKey = toDateKey(slipDate.getFullYear(), slipDate.getMonth(), slipDate.getDate());
 
-            // 오늘이 명세서 발송일인 경우에만 체크
             if (todayKey === slipKey) {
                 const storageKey = `shift_payslip_alert_shown_${slipKey}`;
                 if (!localStorage.getItem(storageKey)) {
@@ -2087,7 +2085,7 @@
             if (config.hireDate) {
                 document.getElementById('input-hire-date').value = config.hireDate;
                 document.getElementById('inp-hire-date').value = config.hireDate;
-                const res = calculateFiscalYearLeave(config.hireDate, 2026);
+                const res = calculateFiscalYearLeave(config.hireDate, currentCalDate.getFullYear());
                 const infoBox = document.getElementById('leave-calc-info-box');
                 if (infoBox) infoBox.innerHTML = `📌 <strong>${res.desc}</strong>`;
                 updateRetroStatusText(parseInt(config.hireDate.split('-')[0], 10));
@@ -2098,6 +2096,7 @@
             document.getElementById('input-base-hours').value = config.baseHours;
             document.getElementById('input-duty-pay').value = config.dutyPay;
             document.getElementById('input-seniority-pay').value = config.seniorityPay;
+            document.getElementById('inp-holiday-bonus').value = config.holidayBonus || 0;
             document.getElementById('inp-retro-check').checked = config.applyRetroPay;
         }
 
@@ -2180,7 +2179,6 @@
             syncFromCalendar();
             initCalendarSwipe();
 
-            // 당일 명세서 수령일 여부 체크 (1회 자동 팝업)
             checkPayslipPopup();
         };
     </script>
