@@ -260,7 +260,6 @@
             box-shadow: 0 1px 3px rgba(60,64,67, 0.05);
         }
 
-        /* 요일 헤더: 튀는 빨간/파란색 없이 눈이 편안한 서브 톤으로 정돈 */
         .cal-weekdays {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -279,7 +278,7 @@
             transition: transform 0.18s ease-out, opacity 0.18s ease-out;
         }
 
-        /* 캘린더 높이: 하단 2칸 빈 공간을 꽉 채우도록 144px 유지 */
+        /* 캘린더 높이 */
         .cal-day {
             min-height: 144px;
             padding: 6px 2px;
@@ -298,7 +297,7 @@
         .cal-day:nth-child(7n) { border-right: none; }
         .cal-day.other-month { background: #fafafa; opacity: 0.35; }
 
-        /* [요청 반영] 날짜 숫자: 빨간색, 파란색을 모두 빼고 차분하고 단정한 단일 폰트 색상으로 통일 */
+        /* 날짜 숫자: 단정한 폰트 색상 통일 */
         .day-num {
             font-size: 13px;
             font-weight: 600;
@@ -313,7 +312,7 @@
             transition: all 0.15s ease;
         }
 
-        /* 오늘 날짜는 찾기 쉽도록 구글 캘린더 블루 배지 유지 */
+        /* 오늘 날짜 파란 원형 배지 */
         .cal-day.today .day-num {
             background: #1a73e8 !important;
             color: #ffffff !important;
@@ -351,7 +350,7 @@
         .shift-badge.day { background: var(--day-bg); color: var(--day-color); border: 1px solid #c2e7ff; }
         .shift-badge.night { background: var(--night-bg); color: var(--night-color); border: 1px solid #e9d5ff; }
         
-        /* 휴무 뱃지: 글씨 빨간색 강조 유지 */
+        /* 휴무 뱃지: 글씨 빨간색 강조 */
         .shift-badge.off {
             background: var(--off-bg);
             color: var(--off-color) !important;
@@ -481,11 +480,12 @@
             font-weight: 700;
         }
 
+        /* 2열 폼 그리드 (간격 여유 확대) */
         .two-cols {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
+            gap: 14px;
+            margin-bottom: 12px;
         }
 
         .input-group label {
@@ -493,12 +493,15 @@
             font-size: 12px;
             font-weight: 700;
             color: #3c4043;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .input-group input, select, textarea {
             width: 100%;
-            padding: 8px 10px;
+            padding: 9px 10px;
             border-radius: 8px;
             border: 1px solid var(--border);
             font-size: 13px;
@@ -557,7 +560,7 @@
             cursor: pointer;
         }
 
-        .btn-reset-data, .btn-backup {
+        .btn-reset-data {
             background: #f1f3f4;
             color: #3c4043;
             border: 1px solid var(--border);
@@ -962,13 +965,14 @@
                     <span style="font-size: 11px; color: var(--leave-color); font-weight: bold;">매년 1월 1일 정산</span>
                 </div>
 
-                <div class="two-cols" style="align-items:center;">
+                <!-- [요청 1] 입사년월일과 총 부여 연차 칸 간격 조정 -->
+                <div class="two-cols" style="gap: 16px; margin-top: 6px; margin-bottom: 12px; align-items: flex-start;">
                     <div class="input-group">
                         <label>입사년월일 선택</label>
                         <input type="date" id="input-hire-date" onchange="onHireDateChange()">
                     </div>
                     <div class="input-group">
-                        <label>총 부여 연차 (자동계산/수정가능)</label>
+                        <label>총 부여 연차 (자동/수정)</label>
                         <input type="number" id="input-total-leave" value="0" step="0.5" min="0" onchange="saveLeaveConfig()" placeholder="예: 19">
                     </div>
                 </div>
@@ -1041,15 +1045,10 @@
                     </div>
                 </div>
 
+                <!-- [요청 2] 백업/복원 버튼 삭제 후 저장/초기화 버튼만 유지 -->
                 <div class="btn-action-group">
                     <button class="btn-save" onclick="manualSaveData()">💾 설정 저장</button>
                     <button class="btn-reset-data" onclick="resetDefaults()">🔄 초기화(기본값)</button>
-                </div>
-
-                <div style="margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                    <button class="btn-backup" onclick="exportDataToFile()">📥 데이터 백업(다운로드)</button>
-                    <button class="btn-backup" onclick="document.getElementById('file-restore-input').click()">📤 데이터 복원(불러오기)</button>
-                    <input type="file" id="file-restore-input" style="display:none;" accept=".json" onchange="importDataFromFile(event)">
                 </div>
             </div>
 
@@ -1059,7 +1058,7 @@
                     • <strong>회계연도 기준(매년 1월 1일):</strong> 전사원이 동일하게 매년 1월 1일 기준으로 연차가 일괄 정산 및 부여됩니다.<br>
                     • <strong>1년 미만 신입사원:</strong> 짝수달 상여금(50%) 대신 매월 300,000원의 신입 지원금이 지급됩니다.<br>
                     • <strong>스케줄러 메모 기능:</strong> 캘린더 날짜를 터치하여 메모를 입력하면 날짜 칸에 📝 뱃지로 표시됩니다.<br>
-                    • <strong>저장 및 초기화:</strong> 입력하신 모든 시급, 연차, 수당, 메모 설정은 💾 [설정 저장] 버튼을 통해 안전하게 보존됩니다.
+                    • <strong>저장 및 초기화:</strong> 입력하신 모든 시급, 연차, 수당, 메모 설정은 💾 [설정 저장] 버튼을 통해 브라우저에 안전하게 보존됩니다.
                 </div>
             </div>
         </section>
@@ -1350,8 +1349,10 @@
 
             for (let d = 1; d <= lastDate; d++) {
                 const dateObj = new Date(year, month, d);
+                const dayOfWeek = dateObj.getDay();
                 const dateStr = toDateKey(year, month, d);
                 const shift = getActualShift(dateObj, currentGroup);
+                const holiday = HOLIDAYS[dateStr] || null;
 
                 if (shift.type === 'DAY' || (shift.type === 'NO_OT' && shift.origType !== 'NIGHT')) {
                     counts.day++;
@@ -1983,46 +1984,6 @@
                 updateLeaveStats();
             }
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function exportDataToFile() {
-            const exportObj = {
-                config: config,
-                overrides_A: localStorage.getItem('shift_overrides_A') || '{}',
-                overrides_B: localStorage.getItem('shift_overrides_B') || '{}',
-                overrides_C: localStorage.getItem('shift_overrides_C') || '{}',
-                memos: localStorage.getItem('shift_day_memos') || '{}',
-                activeGroup: currentGroup
-            };
-            const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `교대근무_설정백업_${new Date().toISOString().slice(0, 10)}.json`;
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function importDataFromFile(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.config) localStorage.setItem('shift_salary_config_master', JSON.stringify(data.config));
-                    if (data.overrides_A) localStorage.setItem('shift_overrides_A', data.overrides_A);
-                    if (data.overrides_B) localStorage.setItem('shift_overrides_B', data.overrides_B);
-                    if (data.overrides_C) localStorage.setItem('shift_overrides_C', data.overrides_C);
-                    if (data.memos) localStorage.setItem('shift_day_memos', data.memos);
-                    if (data.activeGroup) localStorage.setItem('shift_active_group', data.activeGroup);
-                    alert("📥 데이터가 성공적으로 복원되었습니다!");
-                    location.reload();
-                } catch (err) {
-                    alert("⚠️ 파일 형식이 올바르지 않습니다.");
-                }
-            };
-            reader.readAsText(file);
         }
 
         window.onload = function() {
