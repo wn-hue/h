@@ -332,7 +332,6 @@
             margin-bottom: 3px;
         }
 
-        /* 교대근무 뱃지 */
         .shift-badge {
             font-size: 11.5px;
             font-weight: 700;
@@ -476,12 +475,18 @@
             font-weight: 700;
         }
 
-        /* 2열 폼 그리드 (간격 여유 확대) */
+        /* 2열 폼 그리드 (모바일 완벽 5:5 대칭 및 gap 확보) */
         .two-cols {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 12px;
             margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .input-group {
+            min-width: 0;
+            width: 100%;
         }
 
         .input-group label {
@@ -495,8 +500,16 @@
             text-overflow: ellipsis;
         }
 
-        .input-group input, select, textarea {
+        .input-group input, 
+        .input-group select, 
+        .input-group textarea {
             width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
             padding: 9px 10px;
             border-radius: 8px;
             border: 1px solid var(--border);
@@ -505,6 +518,16 @@
             color: var(--text-main);
             outline: none;
             background-color: #ffffff;
+        }
+
+        /* iOS Safari 날짜 인풋 특유의 너비 확장 버그 방지 및 중앙 정렬 */
+        input[type="date"] {
+            -webkit-appearance: none;
+            appearance: none;
+            min-width: 0 !important;
+            max-width: 100% !important;
+            text-align: center;
+            display: block;
         }
 
         textarea { resize: vertical; min-height: 48px; }
@@ -536,15 +559,15 @@
             font-size: 11.5px;
             color: #166534;
             line-height: 1.55;
-            margin: 12px 0 16px 0; /* 상하 여백 여유 확보 */
+            margin: 12px 0 16px 0;
         }
 
-        /* [개선] 연차 통계 3단 카드 (총연차/사용연차/잔여연차) */
+        /* 연차 통계 3단 카드 (총연차/사용연차/잔여연차) */
         .leave-stat-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px; /* 기존 6px에서 10px로 확장하여 칸 겹침 방지 */
-            margin: 16px 0; /* 위아래 여백을 넉넉히 주어 다른 박스와 분리 */
+            gap: 10px;
+            margin: 16px 0;
             text-align: center;
         }
 
@@ -552,7 +575,7 @@
             background: #f8fafc;
             border: 1px solid var(--border);
             border-radius: 12px;
-            padding: 11px 6px; /* 상하 패딩 확장 */
+            padding: 11px 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -563,7 +586,7 @@
             font-size: 11.5px;
             color: var(--text-sub);
             font-weight: 700;
-            margin-bottom: 6px; /* 라벨과 숫자 사이 간격 분리 */
+            margin-bottom: 6px;
         }
 
         .leave-stat-box .stat-value {
@@ -995,8 +1018,8 @@
                     <span style="font-size: 11px; color: var(--leave-color); font-weight: bold;">매년 1월 1일 정산</span>
                 </div>
 
-                <!-- 1. 입사년월일 & 총 부여 연차 입력 그룹 -->
-                <div class="two-cols" style="gap: 14px; margin-top: 6px; margin-bottom: 12px; align-items: flex-start;">
+                <!-- 1. 입사년월일 & 총 부여 연차 입력 그룹 (5:5 대칭 분할 및 12px 간격 적용) -->
+                <div class="two-cols">
                     <div class="input-group">
                         <label>입사년월일 선택</label>
                         <input type="date" id="input-hire-date" onchange="onHireDateChange()">
@@ -1012,7 +1035,7 @@
                     📅 <strong>회계연도 기준(매년 1월 1일 정산):</strong> 전사원 일괄 정산되는 회계일 기준 연차 공식이 적용됩니다.
                 </div>
 
-                <!-- 3. [조정 반영] 연차 현황 3단 통계 카드 (겹침 방지 및 여유 마진 적용) -->
+                <!-- 3. 연차 현황 3단 통계 카드 -->
                 <div class="leave-stat-grid">
                     <div class="leave-stat-box">
                         <div class="stat-label">총 연차</div>
