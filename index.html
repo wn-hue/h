@@ -278,7 +278,6 @@
             transition: transform 0.18s ease-out, opacity 0.18s ease-out;
         }
 
-        /* 캘린더 높이 */
         .cal-day {
             min-height: 144px;
             padding: 6px 2px;
@@ -297,7 +296,6 @@
         .cal-day:nth-child(7n) { border-right: none; }
         .cal-day.other-month { background: #fafafa; opacity: 0.35; }
 
-        /* 날짜 숫자: 단정한 폰트 색상 통일 */
         .day-num {
             font-size: 13px;
             font-weight: 600;
@@ -312,7 +310,6 @@
             transition: all 0.15s ease;
         }
 
-        /* 오늘 날짜 파란 원형 배지 */
         .cal-day.today .day-num {
             background: #1a73e8 !important;
             color: #ffffff !important;
@@ -350,7 +347,6 @@
         .shift-badge.day { background: var(--day-bg); color: var(--day-color); border: 1px solid #c2e7ff; }
         .shift-badge.night { background: var(--night-bg); color: var(--night-color); border: 1px solid #e9d5ff; }
         
-        /* 휴무 뱃지: 글씨 빨간색 강조 */
         .shift-badge.off {
             background: var(--off-bg);
             color: var(--off-color) !important;
@@ -531,15 +527,49 @@
         .view-page { display: none; }
         .view-page.active { display: block; }
 
+        /* 연차 계산 안내 박스 */
         .info-card {
             background: #f0fdf4;
             border: 1px solid #bbf7d0;
-            border-radius: 8px;
-            padding: 10px 12px;
+            border-radius: 10px;
+            padding: 11px 13px;
             font-size: 11.5px;
             color: #166534;
-            line-height: 1.5;
-            margin-top: 10px;
+            line-height: 1.55;
+            margin: 12px 0 16px 0; /* 상하 여백 여유 확보 */
+        }
+
+        /* [개선] 연차 통계 3단 카드 (총연차/사용연차/잔여연차) */
+        .leave-stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px; /* 기존 6px에서 10px로 확장하여 칸 겹침 방지 */
+            margin: 16px 0; /* 위아래 여백을 넉넉히 주어 다른 박스와 분리 */
+            text-align: center;
+        }
+
+        .leave-stat-box {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 11px 6px; /* 상하 패딩 확장 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .leave-stat-box .stat-label {
+            font-size: 11.5px;
+            color: var(--text-sub);
+            font-weight: 700;
+            margin-bottom: 6px; /* 라벨과 숫자 사이 간격 분리 */
+        }
+
+        .leave-stat-box .stat-value {
+            font-size: 17px;
+            font-weight: 800;
+            line-height: 1.2;
         }
 
         .btn-action-group {
@@ -965,8 +995,8 @@
                     <span style="font-size: 11px; color: var(--leave-color); font-weight: bold;">매년 1월 1일 정산</span>
                 </div>
 
-                <!-- [요청 1] 입사년월일과 총 부여 연차 칸 간격 조정 -->
-                <div class="two-cols" style="gap: 16px; margin-top: 6px; margin-bottom: 12px; align-items: flex-start;">
+                <!-- 1. 입사년월일 & 총 부여 연차 입력 그룹 -->
+                <div class="two-cols" style="gap: 14px; margin-top: 6px; margin-bottom: 12px; align-items: flex-start;">
                     <div class="input-group">
                         <label>입사년월일 선택</label>
                         <input type="date" id="input-hire-date" onchange="onHireDateChange()">
@@ -977,28 +1007,31 @@
                     </div>
                 </div>
 
+                <!-- 2. 연차 계산 안내 박스 -->
                 <div class="info-card" id="leave-calc-info-box">
                     📅 <strong>회계연도 기준(매년 1월 1일 정산):</strong> 전사원 일괄 정산되는 회계일 기준 연차 공식이 적용됩니다.
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 12px 0; text-align: center;">
-                    <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:8px 4px;">
-                        <div style="font-size:11px; color:var(--text-sub);">총 연차</div>
-                        <div style="font-size:16px; font-weight:800;" id="stat-total-leave">0일</div>
+                <!-- 3. [조정 반영] 연차 현황 3단 통계 카드 (겹침 방지 및 여유 마진 적용) -->
+                <div class="leave-stat-grid">
+                    <div class="leave-stat-box">
+                        <div class="stat-label">총 연차</div>
+                        <div class="stat-value" id="stat-total-leave">0일</div>
                     </div>
-                    <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:8px 4px;">
-                        <div style="font-size:11px; color:var(--text-sub);">사용 연차</div>
-                        <div style="font-size:16px; font-weight:800; color:#ea580c;" id="stat-used-leave">0일</div>
+                    <div class="leave-stat-box">
+                        <div class="stat-label">사용 연차</div>
+                        <div class="stat-value" style="color:#ea580c;" id="stat-used-leave">0일</div>
                     </div>
-                    <div style="background:#f8fafc; border:1px solid var(--border); border-radius:10px; padding:8px 4px;">
-                        <div style="font-size:11px; color:var(--text-sub);">잔여 연차</div>
-                        <div style="font-size:16px; font-weight:800; color:var(--leave-color);" id="stat-remain-leave">0일</div>
+                    <div class="leave-stat-box">
+                        <div class="stat-label">잔여 연차</div>
+                        <div class="stat-value" style="color:var(--leave-color);" id="stat-remain-leave">0일</div>
                     </div>
                 </div>
 
-                <div style="background: #e6f4ea; border: 1px solid #ceead6; border-radius: 10px; padding: 12px;">
-                    <div style="font-size: 12px; color: #137333; margin-bottom: 4px;">미사용 연차수당 공식: 8시간 × 통상시급 × 잔여일수</div>
-                    <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 4px;">
+                <!-- 4. 미사용 예상 연차수당 박스 -->
+                <div style="background: #e6f4ea; border: 1px solid #ceead6; border-radius: 12px; padding: 14px; margin-top: 14px;">
+                    <div style="font-size: 12px; color: #137333; margin-bottom: 6px;">미사용 연차수당 공식: 8시간 × 통상시급 × 잔여일수</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 12.5px; margin-bottom: 6px;">
                         <span>1일 연차 단가 (8h):</span>
                         <strong id="val-leave-daily-rate">0원</strong>
                     </div>
@@ -1045,7 +1078,6 @@
                     </div>
                 </div>
 
-                <!-- [요청 2] 백업/복원 버튼 삭제 후 저장/초기화 버튼만 유지 -->
                 <div class="btn-action-group">
                     <button class="btn-save" onclick="manualSaveData()">💾 설정 저장</button>
                     <button class="btn-reset-data" onclick="resetDefaults()">🔄 초기화(기본값)</button>
