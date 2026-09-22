@@ -72,7 +72,7 @@
             gap: 8px;
             padding: 8px 12px;
             border-radius: 16px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             background: #ffffff;
             border: 1px solid var(--border);
             box-shadow: 0 1px 3px rgba(60,64,67, 0.08);
@@ -163,12 +163,43 @@
             pointer-events: none;
         }
 
-        /* 구글 캘린더 스타일 상단 헤더 & 월 선택 바 */
+        /* 캘린더 상단 탑바 */
         .gcal-topbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 4px 6px 8px 6px;
+            padding: 4px 2px 10px 2px;
+        }
+
+        .month-title-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+            background: #f8fafc;
+            padding: 3px 5px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+        }
+
+        .nav-arrow-btn {
+            background: transparent;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: #5f6368;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .nav-arrow-btn:active {
+            background: #e8eaed;
+            color: var(--primary);
         }
 
         .month-title-btn {
@@ -176,94 +207,56 @@
             border: none;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            font-size: 20px;
-            font-weight: 700;
+            gap: 4px;
+            font-size: 17px;
+            font-weight: 800;
             color: #202124;
             cursor: pointer;
-            padding: 4px 6px;
-            border-radius: 8px;
+            padding: 4px 8px;
+            border-radius: 16px;
             transition: background 0.15s ease;
         }
 
         .month-title-btn:active {
-            background: #f1f3f4;
+            background: #e8eaed;
         }
 
         .month-title-btn .dropdown-arrow {
-            font-size: 13px;
+            font-size: 12px;
             color: #5f6368;
         }
 
         .gcal-nav-group {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
 
-        .gcal-btn {
-            background: transparent;
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 14px;
-            color: #5f6368;
-            transition: background 0.15s;
-        }
-
-        .gcal-btn:active {
-            background: #f1f3f4;
-        }
-
-        /* 구글 캘린더 가로 스크롤 월 선택 칩 바 */
-        .gcal-month-carousel {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            overflow-x: auto;
-            white-space: nowrap;
-            padding: 4px 2px 10px 2px;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-        }
-
-        .gcal-month-carousel::-webkit-scrollbar {
-            display: none;
-        }
-
-        .month-chip {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
+        .gcal-chip-btn {
             border: 1px solid var(--border);
-            background: #ffffff;
-            color: #3c4043;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            flex-shrink: 0;
-        }
-
-        .month-chip.active {
-            background: #c2e7ff;
-            color: #001d35;
-            border-color: #c2e7ff;
+            border-radius: 18px;
+            padding: 6px 12px;
+            font-size: 12px;
             font-weight: 700;
+            cursor: pointer;
+            background: #ffffff;
+            color: var(--text-main);
+            transition: all 0.15s ease;
         }
 
-        /* 구글 캘린더 그리드 */
+        .gcal-chip-btn:active { transform: scale(0.95); }
+        .gcal-chip-btn.stat-btn { background: #f8fafc; color: #1e293b; border-color: #cbd5e1; }
+        .gcal-chip-btn.today-btn { background: #e8f0fe; color: #1a73e8; border-color: #c2e7ff; }
+
+        /* 캘린더 그리드 (자체 크기 확장: 남는 2칸 여백을 시원하게 채움) */
         .calendar-card {
             background: #ffffff;
-            border-radius: 12px;
+            border-radius: 14px;
             border: 1px solid var(--border);
             overflow: hidden;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             touch-action: pan-y;
+            box-shadow: 0 1px 3px rgba(60,64,67, 0.05);
         }
 
         .cal-weekdays {
@@ -272,8 +265,8 @@
             text-align: center;
             background: #ffffff;
             border-bottom: 1px solid var(--cal-line);
-            padding: 10px 0 6px 0;
-            font-size: 11.5px;
+            padding: 10px 0 8px 0;
+            font-size: 12px;
             font-weight: 600;
             color: var(--text-sub);
         }
@@ -287,9 +280,10 @@
             transition: transform 0.18s ease-out, opacity 0.18s ease-out;
         }
 
+        /* 캘린더 자체 높이를 144px로 시원하게 확장 */
         .cal-day {
-            min-height: 104px;
-            padding: 4px 2px;
+            min-height: 144px;
+            padding: 6px 2px;
             border-right: 1px solid var(--cal-line);
             border-bottom: 1px solid var(--cal-line);
             display: flex;
@@ -303,15 +297,15 @@
         }
 
         .cal-day:nth-child(7n) { border-right: none; }
-        .cal-day.other-month { background: #fafafa; opacity: 0.38; }
+        .cal-day.other-month { background: #fafafa; opacity: 0.35; }
 
-        /* 날짜 숫자 */
+        /* 단정하고 미니멀한 구글 캘린더 순정 폰트 크기 */
         .day-num {
             font-size: 13px;
             font-weight: 600;
-            margin-bottom: 3px;
-            width: 24px;
-            height: 24px;
+            margin-bottom: 4px;
+            width: 25px;
+            height: 25px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -323,36 +317,34 @@
         .cal-day.sat .day-num { color: #1a73e8; }
         .cal-day.holiday .day-num { color: #d93025; font-weight: 700; }
 
-        /* 구글 캘린더 오늘 날짜 파란 원형 배지 */
         .cal-day.today .day-num {
             background: #1a73e8 !important;
             color: #ffffff !important;
             font-weight: 700;
+            box-shadow: 0 2px 5px rgba(26, 115, 232, 0.35);
         }
 
-        /* 구글 캘린더 공휴일 뱃지 (청록색 틸 블록) */
         .holiday-bar {
             background: var(--google-teal);
             color: #ffffff;
             border-radius: 4px;
-            font-size: 9px;
+            font-size: 9.5px;
             font-weight: 700;
-            padding: 1.5px 3px;
-            width: 94%;
+            padding: 2px 3px;
+            width: 95%;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
-        /* 교대근무 뱃지 (구글 캘린더 이벤트 칩 스타일) */
         .shift-badge {
-            font-size: 11px;
+            font-size: 11.5px;
             font-weight: 700;
-            padding: 3px 2px;
+            padding: 4px 2px;
             border-radius: 4px;
-            width: 94%;
+            width: 95%;
             text-align: center;
             letter-spacing: -0.2px;
             margin-bottom: 2px;
@@ -367,20 +359,20 @@
         .shift-badge.unpaid { background: #fee2e2; color: #b91c1c; }
 
         .sub-tag {
-            font-size: 8.5px;
+            font-size: 9px;
             color: var(--no-ot-color);
             font-weight: 700;
             margin-top: 1px;
         }
 
         .memo-tag {
-            font-size: 8.5px;
+            font-size: 9px;
             background: #fef7e0;
             color: #b06000;
-            padding: 1px 3px;
+            padding: 1.5px 4px;
             border-radius: 3px;
-            margin-top: 2px;
-            width: 92%;
+            margin-top: 3px;
+            width: 94%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -605,7 +597,7 @@
         .nav-item .nav-emoji { font-size: 20px; }
         .nav-item.active { color: var(--primary); }
 
-        /* 모달 오버레이 */
+        /* 모달 공통 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -643,6 +635,79 @@
             align-items: center;
         }
 
+        /* 연/월 선택 피커 모달 */
+        .picker-year-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #f1f3f4;
+            padding: 8px 12px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+        }
+
+        .picker-year-bar .year-val {
+            font-size: 18px;
+            font-weight: 800;
+            color: #202124;
+        }
+
+        .picker-year-btn {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: #3c4043;
+            cursor: pointer;
+        }
+
+        .picker-year-btn:active {
+            background: #e8eaed;
+        }
+
+        .picker-month-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .picker-month-btn {
+            border: 1px solid var(--border);
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 14px 4px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #3c4043;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .picker-month-btn.current {
+            border-color: #1a73e8;
+            color: #1a73e8;
+            background: #e8f0fe;
+        }
+
+        .picker-month-btn.active {
+            background: #1a73e8 !important;
+            color: #ffffff !important;
+            border-color: #1a73e8 !important;
+            box-shadow: 0 2px 6px rgba(26, 115, 232, 0.35);
+        }
+
+        .picker-month-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* 근무 변경 모달 버튼 그리드 */
         .modal-btn-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -705,14 +770,13 @@
 </head>
 <body>
     <div class="container">
-        <!-- 최상단 일체형 헤더 바 -->
+        <!-- 최상단 헤더 바 -->
         <header class="app-header">
             <div class="brand-box">
                 <div class="brand-logo">교대</div>
                 <div class="brand-title">교대근무</div>
             </div>
 
-            <!-- 중앙 퀵 칩: 오늘 & 잔여 연차 -->
             <div class="header-quick-chips">
                 <button class="header-chip today-chip" onclick="goToToday()">
                     <span>📍 오늘</span>
@@ -722,7 +786,6 @@
                 </button>
             </div>
 
-            <!-- 단일 콤팩트 조 선택 드롭다운 -->
             <div class="group-select-wrapper">
                 <select id="group-select" class="group-select" onchange="setGroup(this.value)">
                     <option value="A">A조</option>
@@ -732,25 +795,24 @@
             </div>
         </header>
 
-        <!-- 1. 교대 캘린더 화면 (구글 캘린더 UI 적용) -->
+        <!-- 1. 교대 캘린더 화면 (1월~12월 칩 제거로 깔끔해진 뷰) -->
         <section id="view-calendar" class="view-page active">
-            <!-- 상단 바: 월 제목 (클릭 시 통계 팝업) & 좌우 화살표 -->
             <div class="gcal-topbar">
-                <button class="month-title-btn" id="cal-month-title-btn" onclick="openMonthStatsModal()">
-                    <span id="cal-month-title-text">2026년 9월</span>
-                    <span class="dropdown-arrow">▾</span>
-                </button>
+                <div class="month-title-nav">
+                    <button class="nav-arrow-btn" onclick="changeMonth(-1)" title="이전 달">◀</button>
+                    <button class="month-title-btn" id="cal-month-title-btn" onclick="openYearMonthPicker()">
+                        <span id="cal-month-title-text">2026년 9월</span>
+                        <span class="dropdown-arrow">▾</span>
+                    </button>
+                    <button class="nav-arrow-btn" onclick="changeMonth(1)" title="다음 달">▶</button>
+                </div>
                 <div class="gcal-nav-group">
-                    <button class="gcal-btn" onclick="changeMonth(-1)">◀</button>
-                    <button class="gcal-btn" onclick="goToToday()">오늘</button>
-                    <button class="gcal-btn" onclick="changeMonth(1)">▶</button>
+                    <button class="gcal-chip-btn stat-btn" onclick="openMonthStatsModal()">📊 통계</button>
+                    <button class="gcal-chip-btn today-btn" onclick="goToToday()">오늘</button>
                 </div>
             </div>
 
-            <!-- 구글 캘린더 가로 스크롤 월 선택 칩 바 (1월 ~ 12월) -->
-            <div class="gcal-month-carousel" id="month-carousel"></div>
-
-            <!-- 캘린더 그리드 -->
+            <!-- 캘린더 그리드 (자체 높이 144px로 확장) -->
             <div class="calendar-card">
                 <div class="cal-weekdays">
                     <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
@@ -766,8 +828,8 @@
                     <span id="pay-month-title">2026년 9월 급여</span>
                 </div>
                 <div class="gcal-nav-group">
-                    <button class="gcal-btn" onclick="changePayMonth(-1)">◀</button>
-                    <button class="gcal-btn" onclick="changePayMonth(1)">▶</button>
+                    <button class="nav-arrow-btn" onclick="changePayMonth(-1)" style="border:1px solid var(--border);">◀</button>
+                    <button class="nav-arrow-btn" onclick="changePayMonth(1)" style="border:1px solid var(--border);">▶</button>
                 </div>
             </div>
 
@@ -937,7 +999,6 @@
                 </div>
             </div>
 
-            <!-- 급여 기준 단가 설정 -->
             <div class="card">
                 <div class="card-header">
                     <span>급여 기준 단가 설정</span>
@@ -986,7 +1047,6 @@
                 </div>
             </div>
 
-            <!-- 안내 카드: 요청하신 멘트 적용 -->
             <div class="card">
                 <div class="card-header"><span>회계연도 연차 및 급여 규정 안내</span></div>
                 <div style="font-size: 12px; color: var(--text-sub); line-height: 1.65;">
@@ -1015,7 +1075,27 @@
         </button>
     </nav>
 
-    <!-- 1. 월간 근무/휴무 통계 팝업 모달 (9월 터치 시 노출) -->
+    <!-- 1. 구글 캘린더 스타일 연/월 선택 피커 모달 -->
+    <div class="modal-overlay" id="modal-year-month-picker" onclick="closeYearMonthPicker(event)">
+        <div class="modal-sheet" onclick="event.stopPropagation()">
+            <div class="modal-title">
+                <span>🗓️ 이동할 연도와 월 선택</span>
+                <button style="border: none; background: none; font-size: 18px; color: #5f6368; cursor: pointer;" onclick="closeYearMonthPickerDirect()">✕</button>
+            </div>
+            
+            <div class="picker-year-bar">
+                <button class="picker-year-btn" onclick="changePickerYear(-1)">◀</button>
+                <div class="year-val" id="picker-year-text">2026년</div>
+                <button class="picker-year-btn" onclick="changePickerYear(1)">▶</button>
+            </div>
+
+            <div class="picker-month-grid" id="picker-month-grid"></div>
+
+            <button class="btn-reset-data" style="width:100%;" onclick="jumpPickerToToday()">📍 이번 달(오늘)로 이동</button>
+        </div>
+    </div>
+
+    <!-- 2. 이 달 근무/휴무 통계 팝업 모달 -->
     <div class="modal-overlay" id="modal-month-stats" onclick="closeMonthStatsModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-title">
@@ -1052,7 +1132,7 @@
         </div>
     </div>
 
-    <!-- 2. 근태 및 메모 변경 모달 시트 -->
+    <!-- 3. 근태 및 메모 변경 모달 시트 -->
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-title">
@@ -1149,6 +1229,8 @@
         let currentPayDate = new Date(2026, 8, 1);
         let selectedDateStr = null;
 
+        let pickerDisplayYear = 2026;
+
         let overrides = {};
         let dayMemos = {};
         let currentMonthStats = { day: 0, night: 0, special: 0, off: 0, leave: 0, totalWork: 0 };
@@ -1236,41 +1318,10 @@
             return { ...base, hasOt: true, isHoliday: !!holiday, holidayName: holiday ? holiday.name : '' };
         }
 
-        // --- 구글 캘린더 상단 월 칩 렌더링 ---
-        function renderMonthCarousel() {
-            const carousel = document.getElementById('month-carousel');
-            if (!carousel) return;
-            carousel.innerHTML = '';
-            const currentYear = currentCalDate.getFullYear();
-            const currentMonth = currentCalDate.getMonth();
-
-            for (let m = 0; m < 12; m++) {
-                const btn = document.createElement('button');
-                btn.className = `month-chip ${m === currentMonth ? 'active' : ''}`;
-                btn.innerText = `${m + 1}월`;
-                btn.onclick = () => {
-                    currentCalDate = new Date(currentYear, m, 1);
-                    renderCalendar();
-                };
-                carousel.appendChild(btn);
-            }
-
-            // 활성화된 월 칩이 중앙에 오도록 스크롤 정렬
-            setTimeout(() => {
-                const activeChip = carousel.querySelector('.month-chip.active');
-                if (activeChip) {
-                    activeChip.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                }
-            }, 60);
-        }
-
-        // --- 구글 캘린더 그리드 렌더링 ---
         function renderCalendar() {
             const year = currentCalDate.getFullYear();
             const month = currentCalDate.getMonth();
             document.getElementById('cal-month-title-text').innerText = `${year}년 ${month + 1}월`;
-
-            renderMonthCarousel();
 
             const firstDayIndex = new Date(year, month, 1).getDay();
             const lastDate = new Date(year, month + 1, 0).getDate();
@@ -1283,7 +1334,6 @@
 
             let counts = { day: 0, night: 0, special: 0, off: 0, leave: 0, totalWork: 0 };
 
-            // 이전 달 날짜 셀
             for (let i = firstDayIndex - 1; i >= 0; i--) {
                 const d = prevLastDate - i;
                 const cell = document.createElement('div');
@@ -1292,7 +1342,6 @@
                 grid.appendChild(cell);
             }
 
-            // 이번 달 날짜 셀
             for (let d = 1; d <= lastDate; d++) {
                 const dateObj = new Date(year, month, d);
                 const dayOfWeek = dateObj.getDay();
@@ -1353,7 +1402,6 @@
                 grid.appendChild(cell);
             }
 
-            // 다음 달 날짜 셀
             const totalCells = firstDayIndex + lastDate;
             const remaining = (7 - (totalCells % 7)) % 7;
             for (let d = 1; d <= remaining; d++) {
@@ -1367,7 +1415,63 @@
             updateLeaveStats();
         }
 
-        // --- 월간 근무 통계 팝업 모달 제어 (9월 클릭 시) ---
+        function openYearMonthPicker() {
+            pickerDisplayYear = currentCalDate.getFullYear();
+            renderYearMonthPickerUI();
+            document.getElementById('modal-year-month-picker').classList.add('active');
+        }
+
+        function closeYearMonthPickerDirect() {
+            document.getElementById('modal-year-month-picker').classList.remove('active');
+        }
+
+        function closeYearMonthPicker(e) {
+            if (e.target.id === 'modal-year-month-picker') closeYearMonthPickerDirect();
+        }
+
+        function changePickerYear(delta) {
+            pickerDisplayYear += delta;
+            renderYearMonthPickerUI();
+        }
+
+        function renderYearMonthPickerUI() {
+            document.getElementById('picker-year-text').innerText = `${pickerDisplayYear}년`;
+            const grid = document.getElementById('picker-month-grid');
+            grid.innerHTML = '';
+
+            const calYear = currentCalDate.getFullYear();
+            const calMonth = currentCalDate.getMonth();
+            const today = new Date();
+
+            for (let m = 0; m < 12; m++) {
+                const btn = document.createElement('button');
+                btn.className = 'picker-month-btn';
+                btn.innerText = `${m + 1}월`;
+
+                if (pickerDisplayYear === calYear && m === calMonth) {
+                    btn.classList.add('active');
+                }
+                if (pickerDisplayYear === today.getFullYear() && m === today.getMonth()) {
+                    btn.classList.add('current');
+                }
+
+                btn.onclick = () => {
+                    currentCalDate = new Date(pickerDisplayYear, m, 1);
+                    closeYearMonthPickerDirect();
+                    renderCalendar();
+                };
+                grid.appendChild(btn);
+            }
+        }
+
+        function jumpPickerToToday() {
+            const today = new Date();
+            currentCalDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            closeYearMonthPickerDirect();
+            renderCalendar();
+            goToToday();
+        }
+
         function openMonthStatsModal() {
             const year = currentCalDate.getFullYear();
             const month = currentCalDate.getMonth() + 1;
@@ -1423,7 +1527,6 @@
             syncFromCalendar();
         }
 
-        // --- 회계연도 기준 연차 자동 계산 엔진 ---
         function calculateFiscalYearLeave(hireDateStr, targetYear) {
             if (!targetYear) targetYear = 2026;
             if (!hireDateStr) return { leave: 0, desc: "입사년월일을 입력하시면 회계일 기준 연차가 자동 계산됩니다." };
@@ -1538,7 +1641,6 @@
             alert("💾 모든 입력값과 설정이 안전하게 저장되었습니다!");
         }
 
-        // --- 근태 및 메모 모달 ---
         function openOverrideModal(dateStr, dateObj, currentShift) {
             selectedDateStr = dateStr;
             const weekNames = ['일', '월', '화', '수', '목', '금', '토'];
@@ -1627,7 +1729,6 @@
             }
         }
 
-        // --- 급여 계산기 로직 ---
         function changePayMonth(delta) {
             currentPayDate.setMonth(currentPayDate.getMonth() + delta);
             syncFromCalendar();
@@ -1842,7 +1943,6 @@
             }
         }
 
-        // 터치 제스처 스와이프
         function initCalendarSwipe() {
             const calCard = document.querySelector('.calendar-card');
             if (!calCard) return;
