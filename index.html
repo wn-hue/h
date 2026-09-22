@@ -26,8 +26,9 @@
             --day-bg: #e8f0fe;
             --night-color: #6b21a8;
             --night-bg: #f3e8ff;
-            --off-color: #5f6368;
-            --off-bg: #f1f3f4;
+            --off-color: #d93025; /* 휴무 글씨 빨간색 강조 */
+            --off-bg: #fef2f2;
+            --off-border: #fee2e2;
             --special-color: #b45309;
             --special-bg: #fef3c7;
             --leave-color: #0d652d;
@@ -281,7 +282,7 @@
             transition: transform 0.18s ease-out, opacity 0.18s ease-out;
         }
 
-        /* 캘린더 높이: 하단 2칸 빈 공간을 꽉 채우도록 144px 유지 */
+        /* 캘린더 높이: 하단 여백을 꽉 채우도록 144px 유지 */
         .cal-day {
             min-height: 144px;
             padding: 6px 2px;
@@ -300,7 +301,7 @@
         .cal-day:nth-child(7n) { border-right: none; }
         .cal-day.other-month { background: #fafafa; opacity: 0.35; }
 
-        /* 날짜 숫자 기본 */
+        /* 날짜 숫자: 달력 본래의 기준 유지 */
         .day-num {
             font-size: 13px;
             font-weight: 600;
@@ -319,13 +320,7 @@
         .cal-day.sat .day-num { color: #1a73e8; }
         .cal-day.holiday .day-num { color: var(--holiday-red); font-weight: 700; }
 
-        /* [핵심 추가] 교대 휴무일 및 공휴일 날짜 빨간색 강조 */
-        .cal-day.is-off .day-num {
-            color: var(--holiday-red) !important;
-            font-weight: 700;
-        }
-
-        /* 오늘 날짜는 파란 원형 배지 최우선 강조 */
+        /* 오늘 날짜 파란 원형 배지 */
         .cal-day.today .day-num {
             background: #1a73e8 !important;
             color: #ffffff !important;
@@ -348,6 +343,7 @@
             margin-bottom: 3px;
         }
 
+        /* 교대근무 뱃지 */
         .shift-badge {
             font-size: 11.5px;
             font-weight: 700;
@@ -361,7 +357,15 @@
 
         .shift-badge.day { background: var(--day-bg); color: var(--day-color); border: 1px solid #c2e7ff; }
         .shift-badge.night { background: var(--night-bg); color: var(--night-color); border: 1px solid #e9d5ff; }
-        .shift-badge.off { background: var(--off-bg); color: var(--off-color); }
+        
+        /* [요청 반영] 휴무 뱃지: 글씨 빨간색 강조 */
+        .shift-badge.off {
+            background: var(--off-bg);
+            color: var(--off-color) !important;
+            border: 1px solid var(--off-border);
+            font-weight: 800;
+        }
+
         .shift-badge.special { background: var(--special-bg); color: var(--special-color); border: 1px solid #fed7aa; }
         .shift-badge.leave { background: var(--leave-bg); color: var(--leave-color); border: 1px solid #b7eb8f; }
         .shift-badge.no-ot { background: var(--no-ot-bg); color: var(--no-ot-color); border: 1px solid #fecaca; }
@@ -745,7 +749,7 @@
         .opt-btn.half { color: #0284c7; border-color: #bae6fd; background: #f0f9ff; }
         .opt-btn.no-ot { color: var(--no-ot-color); border-color: #fde68a; background: #fffbeb; }
         .opt-btn.unpaid { color: #b91c1c; border-color: #fecaca; background: #fef2f2; }
-        .opt-btn.off { color: #475569; }
+        .opt-btn.off { color: var(--off-color); border-color: #fee2e2; background: #fef2f2; }
         .opt-btn.reset { color: #64748b; grid-column: span 2; }
 
         /* 월 통계 팝업 모달 그리드 */
@@ -1381,19 +1385,6 @@
                 if (dayOfWeek === 0) cellClasses.push('sun');
                 if (dayOfWeek === 6) cellClasses.push('sat');
                 if (shift.isHoliday || !!holiday) cellClasses.push('holiday');
-
-                // [휴무일 판정] 교대 휴무/비번/무급/연차 및 공휴일·셧다운일이면 무조건 날짜 빨간색 강조
-                const isOffDay = (
-                    shift.type === 'OFF' ||
-                    shift.type === 'UNPAID_OFF' ||
-                    shift.type === 'LEAVE' ||
-                    shift.isHoliday ||
-                    !!shift.isShutdown ||
-                    !!holiday ||
-                    SHUTDOWN_DAYS.has(dateStr)
-                );
-                if (isOffDay) cellClasses.push('is-off');
-
                 if (dateStr === todayStr) cellClasses.push('today');
 
                 cell.className = cellClasses.join(' ');
