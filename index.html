@@ -940,7 +940,6 @@
                     </div>
                 </div>
 
-                <!-- 수동입력칸 제거 후 2열 정리 -->
                 <div class="two-cols">
                     <div class="input-group">
                         <label>명절근무수당 (원)</label>
@@ -949,6 +948,18 @@
                     <div class="input-group">
                         <label>입사년월일 (연차·소급·신입 판정)</label>
                         <input type="date" id="inp-hire-date" onchange="onPayrollHireDateChange()">
+                    </div>
+                </div>
+
+                <!-- 무급휴무 자동 연동 및 차감 예상액 확인창 -->
+                <div class="two-cols">
+                    <div class="input-group">
+                        <label>무급휴무 일수 (캘린더 연동)</label>
+                        <input type="text" id="disp-unpaid-days" value="0일" readonly style="background:#f1f5f9; color:#475569; font-weight:700;">
+                    </div>
+                    <div class="input-group">
+                        <label>무급휴무 차감 예상액</label>
+                        <input type="text" id="disp-unpaid-deduction" value="0원" readonly style="background:#fef2f2; color:#b91c1c; font-weight:800;">
                     </div>
                 </div>
 
@@ -1364,7 +1375,7 @@
         let overrides = {};
         let dayMemos = {};
         let currentMonthStats = { day: 0, night: 0, special: 0, off: 0, leave: 0, totalWork: 0 };
-        let syncedUnpaidDays = 0; // 캘린더에서 자동 계산되는 무급 일수
+        let syncedUnpaidDays = 0; // 캘린더 연동 무급 일수
 
         let config = {
             hireDate: '',
@@ -1951,7 +1962,7 @@
             calculatePayrollFromInputs();
         }
 
-        /* 무급 휴무 공제가 내부적으로 자동 반영되는 급여 계산 엔진 */
+        /* 무급 휴무 공제가 자동 반영되고 결과만 표시하는 급여 계산 엔진 */
         function calculatePayrollFromInputs() {
             const E2 = parseFloat(document.getElementById('inp-day-days').value) || 0;
             const E3 = parseFloat(document.getElementById('inp-night-days').value) || 0;
@@ -1971,7 +1982,7 @@
             const rawDutyPay = config.dutyPay;
             const rawSeniorityPay = config.seniorityPay;
 
-            // 캘린더에서 연동된 무급 휴무일수 기준으로 1/27 공제 자동 적용 (원 단위 반올림)
+            // 캘린더 연동 무급 휴무일수 기준으로 공제 적용 (원 단위 반올림)
             const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
             const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));
             const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));
@@ -1980,6 +1991,8 @@
             const basicPay = Math.max(0, rawBasicPay - basicDeduction);
             const dutyPay = Math.max(0, rawDutyPay - dutyDeduction);
             const seniorityPay = Math.max(0, rawSeniorityPay - seniorityDeduction);
+
+            let totalUnpaidDeduction = basicDeduction + dutyDeduction + seniorityDeduction;
 
             const normalWorkDays = E2 + E3;
             const effectiveOtDays = Math.max(0, normalWorkDays - noOtDays);
@@ -2047,10 +2060,10 @@
             } else {
                 entryBonus = 0;
                 if (hasBonusCheck) {
-                    // 원 상여금(기본급 50% + 근속수당) 산출 후 무급 휴무 1/27 공제 자동 적용
                     const rawBonusPay = Math.round(rawBasicPay * 0.5) + rawSeniorityPay;
                     const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));
                     bonusPay = Math.max(0, rawBonusPay - bonusDeduction);
+                    totalUnpaidDeduction += bonusDeduction;
 
                     if (bonusBadge) {
                         bonusBadge.style.display = 'inline-block';
@@ -2063,6 +2076,16 @@
                 }
                 if (trBonus) trBonus.style.display = 'table-row';
                 if (trEntry) trEntry.style.display = 'none';
+            }
+
+            // 무급휴무 일수 및 차감 예상액 디스플레이 업데이트
+            const dispDays = document.getElementById('disp-unpaid-days');
+            if (dispDays) {
+                dispDays.value = `${syncedUnpaidDays}일`;
+            }
+            const dispUnpaid = document.getElementById('disp-unpaid-deduction');
+            if (dispUnpaid) {
+                dispUnpaid.value = syncedUnpaidDays > 0 ? `-${fmt(totalUnpaidDeduction)}원` : '0원';
             }
 
             const regularGross = basicPay + dutyPay + seniorityPay + otPay + nightPay + holPay + holOtPay + holNightPay + otherPay + holidayBonus;
