@@ -367,20 +367,23 @@
             margin-top: 1px;
         }
 
+        /* 메모 태그 (5글자 이상 노출 최적화) */
         .memo-tag {
-            font-size: 9px;
+            font-size: 8.5px;
+            line-height: 1.25;
             background: #fef7e0;
-            color: #b06000;
-            padding: 1.5px 4px;
-            border-radius: 3px;
-            margin-top: 3px;
-            width: 94%;
+            color: #92400e;
+            padding: 1.5px 2px;
+            border-radius: 4px;
+            margin-top: 2px;
+            width: 96%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            font-weight: 700;
+            font-weight: 800;
             text-align: center;
-            border: 1px solid #feefc3;
+            border: 1px solid #fed7aa;
+            letter-spacing: -0.6px;
         }
 
         /* 공통 카드 및 폼 */
@@ -531,8 +534,6 @@
             display: block;
         }
 
-        textarea { resize: vertical; min-height: 48px; }
-
         .toggle-box {
             display: flex;
             align-items: center;
@@ -611,7 +612,9 @@
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
+            transition: background 0.15s ease;
         }
+        .btn-save:active { background: var(--primary-dark); }
 
         .btn-reset-data {
             background: #f1f3f4;
@@ -953,7 +956,7 @@
                     </div>
                 </div>
 
-                <!-- 무급휴무/반차 자동 연동 및 차감 예상액 확인창 -->
+                <!-- 무급 일수 및 차감 예상액 확인창 -->
                 <div class="two-cols">
                     <div class="input-group">
                         <label>무급 일수 (캘린더 연동)</label>
@@ -1240,7 +1243,7 @@
         </div>
     </div>
 
-    <!-- 모달: 근태 및 메모 변경 -->
+    <!-- 모달: 근태 및 메모 변경 (확대된 메모창 및 저장 확인 버튼 적용) -->
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-title">
@@ -1251,9 +1254,11 @@
                 <button style="border: none; background: none; font-size: 18px; color: #5f6368; cursor: pointer;" onclick="closeModalDirect()">✕</button>
             </div>
             
-            <div style="margin-bottom: 14px;">
-                <label style="display:block; font-size:12px; font-weight:700; color:#3c4043; margin-bottom:4px;">📝 일자별 메모 (스케줄러 기능)</label>
-                <textarea id="modal-memo-input" placeholder="예: 설비 점검, 연차 신청, 특근 등 메모 입력..." oninput="onMemoInputChange()"></textarea>
+            <!-- 키워진 일자별 메모칸 & 전용 저장 확인 버튼 -->
+            <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
+                <label style="display:block; font-size:12.5px; font-weight:700; color:#3c4043; margin-bottom:6px;">📝 일자별 메모 (스케줄러 기능)</label>
+                <textarea id="modal-memo-input" style="width:100%; min-height:78px; padding:10px; font-size:13.5px; line-height:1.5; border-radius:8px; border:1px solid var(--border); box-sizing:border-box; resize:none; background:#ffffff;" placeholder="예: 설비 점검, 연차 신청, 특근 등 메모 입력..."></textarea>
+                <button class="btn-save" style="width:100%; margin-top:8px; padding:9px 0; font-size:13px;" onclick="saveMemoDirect()">💾 메모 저장 및 닫기</button>
             </div>
 
             <div style="font-size:12px; font-weight:700; color:#3c4043; margin-bottom:6px;">근무 변경 옵션</div>
@@ -1381,7 +1386,7 @@
         let overrides = {};
         let dayMemos = {};
         let currentMonthStats = { day: 0, night: 0, special: 0, off: 0, leave: 0, totalWork: 0 };
-        let syncedUnpaidDays = 0; // 캘린더 연동 무급 일수 (무급휴무 1.0, 무급반차 0.5)
+        let syncedUnpaidDays = 0;
 
         let config = {
             hireDate: '',
@@ -1560,9 +1565,10 @@
                 let holHtml = shift.holidayName ? `<div class="holiday-bar">${shift.holidayName}</div>` : '';
                 let subHtml = shift.subName ? `<div class="sub-tag">${shift.subName}</div>` : '';
                 
+                // 5글자 이상 온전히 보이도록 개선된 메모 태그
                 let memoHtml = '';
                 if (dayMemos[dateStr]) {
-                    memoHtml = `<div class="memo-tag">📝 ${dayMemos[dateStr]}</div>`;
+                    memoHtml = `<div class="memo-tag" title="${dayMemos[dateStr]}">${dayMemos[dateStr]}</div>`;
                 }
 
                 cell.innerHTML = `
@@ -1840,16 +1846,18 @@
             if (e.target.id === 'modal-override') closeModalDirect();
         }
 
-        function onMemoInputChange() {
+        /* 메모 입력 후 전용 저장 버튼 클릭 시 확실한 저장 및 닫기 처리 */
+        function saveMemoDirect() {
             if (!selectedDateStr) return;
             const val = document.getElementById('modal-memo-input').value;
             if (val.trim() === '') {
                 delete dayMemos[selectedDateStr];
             } else {
-                dayMemos[selectedDateStr] = val;
+                dayMemos[selectedDateStr] = val.trim();
             }
             localStorage.setItem('shift_day_memos', JSON.stringify(dayMemos));
             renderCalendar();
+            closeModalDirect();
         }
 
         function setDayOverride(type) {
@@ -1962,7 +1970,7 @@
                 } else if (shift.type === 'UNPAID_HALF') {
                     if (shift.origType === 'NIGHT') E3 += 0.5;
                     else E2 += 0.5;
-                    noOtDays += 0.5; // 연장 미실시로 0.5일분 OT 차감 (실제 당일 연장 0h)
+                    noOtDays += 0.5; // 연장 미실시로 0.5일분 OT 차감 (당일 연장 0h)
                     unpaidCount += 0.5; // 0.5일 무급 결근분 가산 (2회 사용 시 1일 차감)
                 }
                 curr.setDate(curr.getDate() + 1);
