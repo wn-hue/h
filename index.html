@@ -940,25 +940,15 @@
                     </div>
                 </div>
 
+                <!-- 수동입력칸 제거 후 2열 정리 -->
                 <div class="two-cols">
-                    <div class="input-group">
-                        <label>무급 휴무/결근 (1/27 차감)</label>
-                        <input type="number" id="inp-unpaid-days" value="0" min="0" step="1" oninput="calculatePayrollFromInputs()">
-                    </div>
                     <div class="input-group">
                         <label>명절근무수당 (원)</label>
                         <input type="number" id="inp-holiday-bonus" value="0" step="10000" min="0" oninput="calculatePayrollFromInputs()" placeholder="예: 50000">
                     </div>
-                </div>
-
-                <div class="two-cols">
                     <div class="input-group">
                         <label>입사년월일 (연차·소급·신입 판정)</label>
                         <input type="date" id="inp-hire-date" onchange="onPayrollHireDateChange()">
-                    </div>
-                    <div class="input-group">
-                        <label>무급 공제 총액 (참고용)</label>
-                        <input type="text" id="disp-unpaid-deduction" value="0원" readonly style="background:#fef2f2; color:#b91c1c; font-weight:800;">
                     </div>
                 </div>
 
@@ -1112,7 +1102,6 @@
                 <div style="font-size: 12px; color: var(--text-sub); line-height: 1.65;">
                     • <strong>회계연도 기준(매년 1월 1일):</strong> 전사원이 동일하게 매년 1월 1일 기준으로 연차가 일괄 정산 및 부여됩니다.<br>
                     • <strong>1년 미만 신입사원:</strong> 짝수달 상여금(50%) 대신 매월 300,000원의 신입 지원금이 지급됩니다.<br>
-                    • <strong>무급 결근 공제:</strong> 기본급, 근속수당, 직책수당 및 상여금에 대해 1일 결근당 1/27(약 3.70%)씩 일괄 차감됩니다.<br>
                     • <strong>월급일 및 명세서:</strong> 25일이 공휴일/주말일 경우 직전 영업일에 입금되며, 명세서는 입금일 하루 전 영업일에 발송 알림이 표시됩니다.<br>
                     • <strong>저장 및 초기화:</strong> 입력하신 모든 시급, 연차, 수당, 메모 설정은 💾 [설정 저장] 버튼을 통해 브라우저에 안전하게 보존됩니다.
                 </div>
@@ -1278,7 +1267,7 @@
                 </button>
                 <button class="opt-btn unpaid" onclick="setDayOverride('UNPAID_OFF')">
                     <span>🚫 무급 휴무</span>
-                    <span style="font-size:10px; opacity:0.8;">무급결근 (1/27 수당 차감)</span>
+                    <span style="font-size:10px; opacity:0.8;">무급 결근</span>
                 </button>
                 <button class="opt-btn off" onclick="setDayOverride('FORCED_OFF')">
                     <span>🛌 강제 휴무</span>
@@ -1375,6 +1364,7 @@
         let overrides = {};
         let dayMemos = {};
         let currentMonthStats = { day: 0, night: 0, special: 0, off: 0, leave: 0, totalWork: 0 };
+        let syncedUnpaidDays = 0; // 캘린더에서 자동 계산되는 무급 일수
 
         let config = {
             hireDate: '',
@@ -1922,7 +1912,7 @@
             const endStr = toDateKey(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
             document.getElementById('pay-period-label').innerText = `산정기간: ${startStr} ~ ${endStr}`;
 
-            let E2 = 0, E3 = 0, E4 = 0, E5 = 0, noOtDays = 0, unpaidDays = 0;
+            let E2 = 0, E3 = 0, E4 = 0, E5 = 0, noOtDays = 0, unpaidCount = 0;
 
             let curr = new Date(startDate.getTime());
             while (curr <= endDate) {
@@ -1944,30 +1934,30 @@
                     else E2 += 0.5;
                     noOtDays += 0.5;
                 } else if (shift.type === 'UNPAID_OFF') {
-                    unpaidDays++;
+                    unpaidCount++;
                 }
                 curr.setDate(curr.getDate() + 1);
             }
+
+            syncedUnpaidDays = unpaidCount; // 내부 변수에 자동 집계 저장
 
             document.getElementById('inp-day-days').value = E2;
             document.getElementById('inp-night-days').value = E3;
             document.getElementById('inp-daysp-days').value = E4;
             document.getElementById('inp-nightsp-days').value = E5;
             document.getElementById('inp-no-ot-days').value = noOtDays;
-            document.getElementById('inp-unpaid-days').value = unpaidDays;
 
             document.getElementById('inp-bonus-check').checked = (payMonthNum % 2 === 0);
             calculatePayrollFromInputs();
         }
 
-        /* 1/27 무급 결근 공제 공식이 반영된 급여 계산 엔진 */
+        /* 무급 휴무 공제가 내부적으로 자동 반영되는 급여 계산 엔진 */
         function calculatePayrollFromInputs() {
             const E2 = parseFloat(document.getElementById('inp-day-days').value) || 0;
             const E3 = parseFloat(document.getElementById('inp-night-days').value) || 0;
             const E4 = parseFloat(document.getElementById('inp-daysp-days').value) || 0;
             const E5 = parseFloat(document.getElementById('inp-nightsp-days').value) || 0;
             const noOtDays = parseFloat(document.getElementById('inp-no-ot-days').value) || 0;
-            const unpaidDays = parseFloat(document.getElementById('inp-unpaid-days').value) || 0;
             const holidayBonus = parseFloat(document.getElementById('inp-holiday-bonus').value) || 0;
             const hasBonusCheck = document.getElementById('inp-bonus-check').checked;
             const applyRetro = document.getElementById('inp-retro-check').checked;
@@ -1981,17 +1971,15 @@
             const rawDutyPay = config.dutyPay;
             const rawSeniorityPay = config.seniorityPay;
 
-            // 1일당 1/27 공제액 계산 (원 단위 반올림)
-            const basicDeduction = Math.round(rawBasicPay * (unpaidDays / 27));
-            const dutyDeduction = Math.round(rawDutyPay * (unpaidDays / 27));
-            const seniorityDeduction = Math.round(rawSeniorityPay * (unpaidDays / 27));
+            // 캘린더에서 연동된 무급 휴무일수 기준으로 1/27 공제 자동 적용 (원 단위 반올림)
+            const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
+            const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));
+            const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));
 
             // 실지급 기본급, 직책수당, 근속수당
             const basicPay = Math.max(0, rawBasicPay - basicDeduction);
             const dutyPay = Math.max(0, rawDutyPay - dutyDeduction);
             const seniorityPay = Math.max(0, rawSeniorityPay - seniorityDeduction);
-
-            let totalUnpaidDeduction = basicDeduction + dutyDeduction + seniorityDeduction;
 
             const normalWorkDays = E2 + E3;
             const effectiveOtDays = Math.max(0, normalWorkDays - noOtDays);
@@ -2059,11 +2047,10 @@
             } else {
                 entryBonus = 0;
                 if (hasBonusCheck) {
-                    // 원 상여금(기본급 50% + 근속수당) 산출 후 1/27 공제 적용
+                    // 원 상여금(기본급 50% + 근속수당) 산출 후 무급 휴무 1/27 공제 자동 적용
                     const rawBonusPay = Math.round(rawBasicPay * 0.5) + rawSeniorityPay;
-                    const bonusDeduction = Math.round(rawBonusPay * (unpaidDays / 27));
+                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));
                     bonusPay = Math.max(0, rawBonusPay - bonusDeduction);
-                    totalUnpaidDeduction += bonusDeduction;
 
                     if (bonusBadge) {
                         bonusBadge.style.display = 'inline-block';
@@ -2076,11 +2063,6 @@
                 }
                 if (trBonus) trBonus.style.display = 'table-row';
                 if (trEntry) trEntry.style.display = 'none';
-            }
-
-            const dispUnpaid = document.getElementById('disp-unpaid-deduction');
-            if (dispUnpaid) {
-                dispUnpaid.value = unpaidDays > 0 ? `-${fmt(totalUnpaidDeduction)}원 (${unpaidDays}일)` : '0원';
             }
 
             const regularGross = basicPay + dutyPay + seniorityPay + otPay + nightPay + holPay + holOtPay + holNightPay + otherPay + holidayBonus;
@@ -2200,6 +2182,7 @@
                     hireDate: '', totalLeave: 0, baseHourly: 0, ordinaryHourly: 0,
                     baseHours: 209, dutyPay: 0, seniorityPay: 0, applyRetroPay: false, holidayBonus: 0
                 };
+                syncedUnpaidDays = 0;
                 localStorage.removeItem('shift_salary_config_master');
                 localStorage.removeItem('shift_day_memos');
                 dayMemos = {};
