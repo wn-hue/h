@@ -358,6 +358,7 @@
         .shift-badge.leave { background: var(--leave-bg); color: var(--leave-color); border: 1px solid #b7eb8f; }
         .shift-badge.no-ot { background: var(--no-ot-bg); color: var(--no-ot-color); border: 1px solid #fecaca; }
         .shift-badge.unpaid { background: #fee2e2; color: #b91c1c; }
+        .shift-badge.unpaid-half { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
 
         .sub-tag {
             font-size: 9px;
@@ -788,8 +789,9 @@
         .opt-btn.leave { color: var(--leave-color); border-color: #b7eb8f; background: #f6ffed; }
         .opt-btn.half { color: #0284c7; border-color: #bae6fd; background: #f0f9ff; }
         .opt-btn.no-ot { color: var(--no-ot-color); border-color: #fde68a; background: #fffbeb; }
-        .opt-btn.unpaid { color: #b91c1c; border-color: #fecaca; background: #fef2f2; }
         .opt-btn.off { color: var(--off-color); border-color: #fee2e2; background: #fef2f2; }
+        .opt-btn.unpaid { color: #b91c1c; border-color: #fecaca; background: #fef2f2; }
+        .opt-btn.unpaid-half { color: #c2410c; border-color: #fdba74; background: #fff7ed; }
         .opt-btn.reset { color: #64748b; grid-column: span 2; }
 
         /* 월 통계 팝업 모달 그리드 */
@@ -951,14 +953,14 @@
                     </div>
                 </div>
 
-                <!-- 무급휴무 자동 연동 및 차감 예상액 확인창 -->
+                <!-- 무급휴무/반차 자동 연동 및 차감 예상액 확인창 -->
                 <div class="two-cols">
                     <div class="input-group">
-                        <label>무급휴무 일수 (캘린더 연동)</label>
+                        <label>무급 일수 (캘린더 연동)</label>
                         <input type="text" id="disp-unpaid-days" value="0일" readonly style="background:#f1f5f9; color:#475569; font-weight:700;">
                     </div>
                     <div class="input-group">
-                        <label>무급휴무 차감 예상액</label>
+                        <label>무급 차감 예상액</label>
                         <input type="text" id="disp-unpaid-deduction" value="0원" readonly style="background:#fef2f2; color:#b91c1c; font-weight:800;">
                     </div>
                 </div>
@@ -1270,19 +1272,23 @@
                 </button>
                 <button class="opt-btn half" onclick="setDayOverride('HALF_LEAVE')">
                     <span>⏱️ 반차</span>
-                    <span style="font-size:10px; opacity:0.8;">-0.5일 (4h 근무, 2.5h OT 제외)</span>
+                    <span style="font-size:10px; opacity:0.8;">-0.5일 (4h 근무, OT 제외)</span>
                 </button>
                 <button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
                     <span>⏹️ O.T 해제</span>
                     <span style="font-size:10px; opacity:0.8;">정시퇴근 (2.5h OT 제외)</span>
                 </button>
+                <button class="opt-btn off" onclick="setDayOverride('FORCED_OFF')">
+                    <span>🛌 강제 휴무</span>
+                    <span style="font-size:10px; opacity:0.8;">비번/휴무 처리</span>
+                </button>
                 <button class="opt-btn unpaid" onclick="setDayOverride('UNPAID_OFF')">
                     <span>🚫 무급 휴무</span>
                     <span style="font-size:10px; opacity:0.8;">무급 결근</span>
                 </button>
-                <button class="opt-btn off" onclick="setDayOverride('FORCED_OFF')">
-                    <span>🛌 강제 휴무</span>
-                    <span style="font-size:10px; opacity:0.8;">비번/휴무 처리</span>
+                <button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF')">
+                    <span>🌗 무급 반차</span>
+                    <span style="font-size:10px; opacity:0.8;">4h 근무 (OT 제외)</span>
                 </button>
                 <button class="opt-btn reset" onclick="setDayOverride(null)">
                     <span>🔄 기본 스케줄로 복구</span>
@@ -1375,7 +1381,7 @@
         let overrides = {};
         let dayMemos = {};
         let currentMonthStats = { day: 0, night: 0, special: 0, off: 0, leave: 0, totalWork: 0 };
-        let syncedUnpaidDays = 0;
+        let syncedUnpaidDays = 0; // 캘린더 연동 무급 일수 (무급휴무 1.0, 무급반차 0.5)
 
         let config = {
             hireDate: '',
@@ -1465,6 +1471,7 @@
                 if (ov === 'HALF_LEAVE') return { type: 'HALF_LEAVE', name: '반차', isLeave: true, leaveVal: 0.5, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'NO_OT') return { type: 'NO_OT', name: base.type === 'NIGHT' ? '야간' : '주간', subName: 'O.T해제', isNoOt: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'UNPAID_OFF') return { type: 'UNPAID_OFF', name: '무급', isUnpaid: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
+                if (ov === 'UNPAID_HALF') return { type: 'UNPAID_HALF', name: '무반', isUnpaidHalf: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'FORCED_OFF') return { type: 'OFF', name: '휴무', isOff: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
             }
 
@@ -1527,6 +1534,11 @@
                     counts.totalWork += 0.5;
                     if (shift.origType === 'NIGHT') counts.night += 0.5;
                     else counts.day += 0.5;
+                } else if (shift.type === 'UNPAID_HALF') {
+                    counts.totalWork += 0.5;
+                    counts.off += 0.5;
+                    if (shift.origType === 'NIGHT') counts.night += 0.5;
+                    else counts.day += 0.5;
                 }
 
                 const cell = document.createElement('div');
@@ -1543,6 +1555,7 @@
                 else if (shift.type === 'LEAVE' || shift.type === 'HALF_LEAVE') badgeClass = 'leave';
                 else if (shift.type === 'NO_OT') badgeClass = 'no-ot';
                 else if (shift.type === 'UNPAID_OFF') badgeClass = 'unpaid';
+                else if (shift.type === 'UNPAID_HALF') badgeClass = 'unpaid-half';
 
                 let holHtml = shift.holidayName ? `<div class="holiday-bar">${shift.holidayName}</div>` : '';
                 let subHtml = shift.subName ? `<div class="sub-tag">${shift.subName}</div>` : '';
@@ -1945,7 +1958,12 @@
                     else E2 += 0.5;
                     noOtDays += 0.5;
                 } else if (shift.type === 'UNPAID_OFF') {
-                    unpaidCount++;
+                    unpaidCount += 1.0;
+                } else if (shift.type === 'UNPAID_HALF') {
+                    if (shift.origType === 'NIGHT') E3 += 0.5;
+                    else E2 += 0.5;
+                    noOtDays += 0.5; // 연장 미실시로 0.5일분 OT 차감 (실제 당일 연장 0h)
+                    unpaidCount += 0.5; // 0.5일 무급 결근분 가산 (2회 사용 시 1일 차감)
                 }
                 curr.setDate(curr.getDate() + 1);
             }
@@ -1962,7 +1980,7 @@
             calculatePayrollFromInputs();
         }
 
-        /* 무급 휴무 공제가 자동 반영되고 결과만 표시하는 급여 계산 엔진 */
+        /* 무급휴무 및 무급반차가 자동 반영되는 급여 계산 엔진 */
         function calculatePayrollFromInputs() {
             const E2 = parseFloat(document.getElementById('inp-day-days').value) || 0;
             const E3 = parseFloat(document.getElementById('inp-night-days').value) || 0;
@@ -1982,7 +2000,7 @@
             const rawDutyPay = config.dutyPay;
             const rawSeniorityPay = config.seniorityPay;
 
-            // 캘린더 연동 무급 휴무일수 기준으로 공제 적용 (원 단위 반올림)
+            // 캘린더 연동 무급 일수(반차 0.5, 휴무 1.0) 기준으로 공제 적용 (원 단위 반올림)
             const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
             const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));
             const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));
@@ -2078,7 +2096,7 @@
                 if (trEntry) trEntry.style.display = 'none';
             }
 
-            // 무급휴무 일수 및 차감 예상액 디스플레이 업데이트
+            // 무급 일수 및 차감 예상액 디스플레이 업데이트
             const dispDays = document.getElementById('disp-unpaid-days');
             if (dispDays) {
                 dispDays.value = `${syncedUnpaidDays}일`;
@@ -2178,7 +2196,7 @@
                 try { config = { ...config, ...JSON.parse(saved) }; } catch (e) {}
             }
             
-            // 입사일 및 소급 상태 텍스트 동기화 보정
+            // 입사일 및 소급 상태 텍스트 동기화
             if (config.hireDate) {
                 document.getElementById('input-hire-date').value = config.hireDate;
                 document.getElementById('inp-hire-date').value = config.hireDate;
