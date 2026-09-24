@@ -1224,7 +1224,6 @@
                 <span id="stat-modal-title">📊 2026년 9월 근무 현황 (C조)</span>
                 <button style="border: none; background: none; font-size: 18px; color: #5f6368; cursor: pointer;" onclick="closeMonthStatsModalDirect()">✕</button>
             </div>
-            <!-- 급여 산정기간 안내 태그 -->
             <div id="stat-modal-period" style="font-size:11.5px; color:var(--text-sub); margin-bottom:14px; font-weight:700; background:#f1f5f9; padding:5px 10px; border-radius:6px; display:inline-block;">산정기간: 2026-08-16 ~ 2026-09-15</div>
             
             <div class="month-stat-grid">
@@ -1395,7 +1394,7 @@
         let selectedDateStr = null;
 
         let pickerDisplayYear = new Date().getFullYear();
-        let pickerTarget = 'calendar'; // 'calendar' 또는 'payroll'
+        let pickerTarget = 'calendar';
 
         let overrides = {};
         let dayMemos = {};
@@ -1578,7 +1577,7 @@
             updateLeaveStats();
         }
 
-        /* 캘린더 및 급여계산기 공용 연/월 선택 피커 모달 제어 */
+        /* 캘린더 및 급여계산기 공용 연/월 선택 피커 모달 */
         function openYearMonthPicker(target = 'calendar') {
             pickerTarget = target;
             document.getElementById('picker-title-text').innerText = (target === 'payroll') ? '💰 이동할 급여 월 선택' : '🗓️ 이동할 연도와 월 선택';
@@ -1656,7 +1655,7 @@
             syncFromCalendar();
         }
 
-        /* 탭1 근무 통계: 캘린더에서 보고 있는 달의 '급여 기준날짜(전월 16일 ~ 당월 15일)' 기준으로 정확히 집계 */
+        /* 탭1 근무 통계: 캘린더에서 보고 있는 달의 '급여 기준날짜(전월 16일 ~ 당월 15일)' 기준으로 집계 */
         function openMonthStatsModal() {
             const year = currentCalDate.getFullYear();
             const month = currentCalDate.getMonth();
@@ -2037,7 +2036,7 @@
             calculatePayrollFromInputs();
         }
 
-        /* 무급 공제가 자동 반영되는 급여 계산 엔진 */
+        /* 오류가 완벽히 수정된 급여 계산 엔진 */
         function calculatePayrollFromInputs() {
             const E2 = parseFloat(document.getElementById('inp-day-days').value) || 0;
             const E3 = parseFloat(document.getElementById('inp-night-days').value) || 0;
@@ -2056,9 +2055,10 @@
             const rawDutyPay = config.dutyPay;
             const rawSeniorityPay = config.seniorityPay;
 
-            const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));[span_0](start_span)[span_0](end_span)
-            const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));[span_1](start_span)[span_1](end_span)
-            const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));[span_2](start_span)[span_2](end_span)
+            // 1/27 공제 계산 (문법 오류 제거 완료)
+            const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
+            const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));
+            const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));
 
             const basicPay = Math.max(0, rawBasicPay - basicDeduction);
             const dutyPay = Math.max(0, rawDutyPay - dutyDeduction);
@@ -2133,7 +2133,7 @@
                 entryBonus = 0;
                 if (hasBonusCheck) {
                     const rawBonusPay = Math.round(rawBasicPay * 0.5) + rawSeniorityPay;
-                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));[span_3](start_span)[span_3](end_span)
+                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));
                     bonusPay = Math.max(0, rawBonusPay - bonusDeduction);
                     totalUnpaidDeduction += bonusDeduction;
 
