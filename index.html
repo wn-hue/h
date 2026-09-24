@@ -164,7 +164,7 @@
             pointer-events: none;
         }
 
-        /* 캘린더 상단 탑바 */
+        /* 캘린더 & 급여 상단 탑바 */
         .gcal-topbar {
             display: flex;
             justify-content: space-between;
@@ -209,7 +209,7 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 800;
             color: #202124;
             cursor: pointer;
@@ -406,12 +406,18 @@
             padding-bottom: 8px;
         }
 
+        /* 총 지급액 히어로 카드 (스와이프 기능 탑재) */
         .salary-hero {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             color: #ffffff;
             border-radius: 14px;
             padding: 18px;
             margin-bottom: 14px;
+            touch-action: pan-y;
+            user-select: none;
+            position: relative;
+            cursor: grab;
+            transition: transform 0.15s ease;
         }
 
         .period-tag {
@@ -858,7 +864,7 @@
             <div class="gcal-topbar">
                 <div class="month-title-nav">
                     <button class="nav-arrow-btn" onclick="changeMonth(-1)" title="이전 달">◀</button>
-                    <button class="month-title-btn" id="cal-month-title-btn" onclick="openYearMonthPicker()">
+                    <button class="month-title-btn" id="cal-month-title-btn" onclick="openYearMonthPicker('calendar')">
                         <span id="cal-month-title-text">2026년 9월</span>
                         <span class="dropdown-arrow">▾</span>
                     </button>
@@ -878,19 +884,24 @@
             </div>
         </section>
 
-        <!-- 2. 급여 계산기 화면 -->
+        <!-- 2. 급여 계산기 화면 (탭1 방식 탑바 & 피커 연동) -->
         <section id="view-payroll" class="view-page">
             <div class="gcal-topbar">
-                <div class="month-title-btn" style="cursor:default;">
-                    <span id="pay-month-title">2026년 9월 급여</span>
+                <div class="month-title-nav">
+                    <button class="nav-arrow-btn" onclick="changePayMonth(-1)" title="이전 달">◀</button>
+                    <button class="month-title-btn" id="pay-month-title-btn" onclick="openYearMonthPicker('payroll')">
+                        <span id="pay-month-title">2026년 9월 급여</span>
+                        <span class="dropdown-arrow">▾</span>
+                    </button>
+                    <button class="nav-arrow-btn" onclick="changePayMonth(1)" title="다음 달">▶</button>
                 </div>
                 <div class="gcal-nav-group">
-                    <button class="nav-arrow-btn" onclick="changePayMonth(-1)" style="border:1px solid var(--border);">◀</button>
-                    <button class="nav-arrow-btn" onclick="changePayMonth(1)" style="border:1px solid var(--border);">▶</button>
+                    <button class="gcal-chip-btn today-btn" onclick="goToPayToday()">이번달</button>
                 </div>
             </div>
 
-            <div class="salary-hero">
+            <!-- 총지급액 히어로 카드 (좌/우 스와이프 지원) -->
+            <div class="salary-hero" id="salary-hero-card" title="좌우로 스와이프하여 이전/다음 달 급여 이동">
                 <div class="period-tag" id="pay-period-label">산정기간: 2026-08-16 ~ 2026-09-15</div>
                 <div class="hero-label">총 지급액 (세전 합계)</div>
                 <div class="hero-amount" id="hero-gross-pay">0 원</div>
@@ -1186,11 +1197,11 @@
         </div>
     </div>
 
-    <!-- 모달: 연/월 선택 피커 -->
+    <!-- 모달: 연/월 선택 피커 (캘린더 & 급여계산기 공용) -->
     <div class="modal-overlay" id="modal-year-month-picker" onclick="closeYearMonthPicker(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-title">
-                <span>🗓️ 이동할 연도와 월 선택</span>
+                <span id="picker-title-text">🗓️ 이동할 연도와 월 선택</span>
                 <button style="border: none; background: none; font-size: 18px; color: #5f6368; cursor: pointer;" onclick="closeYearMonthPickerDirect()">✕</button>
             </div>
             
@@ -1243,7 +1254,7 @@
         </div>
     </div>
 
-    <!-- 모달: 근태 및 메모 변경 (확대된 메모창 및 저장 확인 버튼 적용) -->
+    <!-- 모달: 근태 및 메모 변경 -->
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-title">
@@ -1254,7 +1265,6 @@
                 <button style="border: none; background: none; font-size: 18px; color: #5f6368; cursor: pointer;" onclick="closeModalDirect()">✕</button>
             </div>
             
-            <!-- 키워진 일자별 메모칸 & 전용 저장 확인 버튼 -->
             <div style="margin-bottom: 16px; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid var(--border);">
                 <label style="display:block; font-size:12.5px; font-weight:700; color:#3c4043; margin-bottom:6px;">📝 일자별 메모 (스케줄러 기능)</label>
                 <textarea id="modal-memo-input" style="width:100%; min-height:78px; padding:10px; font-size:13.5px; line-height:1.5; border-radius:8px; border:1px solid var(--border); box-sizing:border-box; resize:none; background:#ffffff;" placeholder="예: 설비 점검, 연차 신청, 특근 등 메모 입력..."></textarea>
@@ -1382,6 +1392,7 @@
         let selectedDateStr = null;
 
         let pickerDisplayYear = new Date().getFullYear();
+        let pickerTarget = 'calendar'; // 'calendar' 또는 'payroll' 구분
 
         let overrides = {};
         let dayMemos = {};
@@ -1565,7 +1576,6 @@
                 let holHtml = shift.holidayName ? `<div class="holiday-bar">${shift.holidayName}</div>` : '';
                 let subHtml = shift.subName ? `<div class="sub-tag">${shift.subName}</div>` : '';
                 
-                // 5글자 이상 온전히 보이도록 개선된 메모 태그
                 let memoHtml = '';
                 if (dayMemos[dateStr]) {
                     memoHtml = `<div class="memo-tag" title="${dayMemos[dateStr]}">${dayMemos[dateStr]}</div>`;
@@ -1594,8 +1604,11 @@
             updateLeaveStats();
         }
 
-        function openYearMonthPicker() {
-            pickerDisplayYear = currentCalDate.getFullYear();
+        /* 캘린더 및 급여계산기 공용 연/월 선택 피커 모달 제어 */
+        function openYearMonthPicker(target = 'calendar') {
+            pickerTarget = target;
+            document.getElementById('picker-title-text').innerText = (target === 'payroll') ? '💰 이동할 급여 월 선택' : '🗓️ 이동할 연도와 월 선택';
+            pickerDisplayYear = (pickerTarget === 'payroll') ? currentPayDate.getFullYear() : currentCalDate.getFullYear();
             renderYearMonthPickerUI();
             document.getElementById('modal-year-month-picker').classList.add('active');
         }
@@ -1618,8 +1631,8 @@
             const grid = document.getElementById('picker-month-grid');
             grid.innerHTML = '';
 
-            const calYear = currentCalDate.getFullYear();
-            const calMonth = currentCalDate.getMonth();
+            const activeYear = (pickerTarget === 'payroll') ? currentPayDate.getFullYear() : currentCalDate.getFullYear();
+            const activeMonth = (pickerTarget === 'payroll') ? currentPayDate.getMonth() : currentCalDate.getMonth();
             const today = new Date();
 
             for (let m = 0; m < 12; m++) {
@@ -1627,7 +1640,7 @@
                 btn.className = 'picker-month-btn';
                 btn.innerText = `${m + 1}월`;
 
-                if (pickerDisplayYear === calYear && m === calMonth) {
+                if (pickerDisplayYear === activeYear && m === activeMonth) {
                     btn.classList.add('active');
                 }
                 if (pickerDisplayYear === today.getFullYear() && m === today.getMonth()) {
@@ -1635,9 +1648,15 @@
                 }
 
                 btn.onclick = () => {
-                    currentCalDate = new Date(pickerDisplayYear, m, 1);
-                    closeYearMonthPickerDirect();
-                    renderCalendar();
+                    if (pickerTarget === 'payroll') {
+                        currentPayDate = new Date(pickerDisplayYear, m, 1);
+                        closeYearMonthPickerDirect();
+                        syncFromCalendar();
+                    } else {
+                        currentCalDate = new Date(pickerDisplayYear, m, 1);
+                        closeYearMonthPickerDirect();
+                        renderCalendar();
+                    }
                 };
                 grid.appendChild(btn);
             }
@@ -1645,10 +1664,22 @@
 
         function jumpPickerToToday() {
             const today = new Date();
-            currentCalDate = new Date(today.getFullYear(), today.getMonth(), 1);
-            closeYearMonthPickerDirect();
-            renderCalendar();
-            goToToday();
+            if (pickerTarget === 'payroll') {
+                currentPayDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                closeYearMonthPickerDirect();
+                syncFromCalendar();
+            } else {
+                currentCalDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                closeYearMonthPickerDirect();
+                renderCalendar();
+                goToToday();
+            }
+        }
+
+        function goToPayToday() {
+            const today = new Date();
+            currentPayDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            syncFromCalendar();
         }
 
         function openMonthStatsModal() {
@@ -1846,7 +1877,7 @@
             if (e.target.id === 'modal-override') closeModalDirect();
         }
 
-        /* 메모 입력 후 전용 저장 버튼 클릭 시 확실한 저장 및 닫기 처리 */
+        /* 메모 저장 및 닫기 */
         function saveMemoDirect() {
             if (!selectedDateStr) return;
             const val = document.getElementById('modal-memo-input').value;
@@ -1970,8 +2001,8 @@
                 } else if (shift.type === 'UNPAID_HALF') {
                     if (shift.origType === 'NIGHT') E3 += 0.5;
                     else E2 += 0.5;
-                    noOtDays += 0.5; // 연장 미실시로 0.5일분 OT 차감 (당일 연장 0h)
-                    unpaidCount += 0.5; // 0.5일 무급 결근분 가산 (2회 사용 시 1일 차감)
+                    noOtDays += 0.5;
+                    unpaidCount += 0.5;
                 }
                 curr.setDate(curr.getDate() + 1);
             }
@@ -1988,7 +2019,7 @@
             calculatePayrollFromInputs();
         }
 
-        /* 무급휴무 및 무급반차가 자동 반영되는 급여 계산 엔진 */
+        /* 무급 공제가 자동 반영되는 급여 계산 엔진 */
         function calculatePayrollFromInputs() {
             const E2 = parseFloat(document.getElementById('inp-day-days').value) || 0;
             const E3 = parseFloat(document.getElementById('inp-night-days').value) || 0;
@@ -2003,17 +2034,14 @@
             const B8 = config.ordinaryHourly;
             const baseHours = config.baseHours || 209;
 
-            // 원 기준 금액 (공제 전)
             const rawBasicPay = B7 * baseHours;
             const rawDutyPay = config.dutyPay;
             const rawSeniorityPay = config.seniorityPay;
 
-            // 캘린더 연동 무급 일수(반차 0.5, 휴무 1.0) 기준으로 공제 적용 (원 단위 반올림)
             const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
             const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));
             const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));
 
-            // 실지급 기본급, 직책수당, 근속수당
             const basicPay = Math.max(0, rawBasicPay - basicDeduction);
             const dutyPay = Math.max(0, rawDutyPay - dutyDeduction);
             const seniorityPay = Math.max(0, rawSeniorityPay - seniorityDeduction);
@@ -2104,7 +2132,6 @@
                 if (trEntry) trEntry.style.display = 'none';
             }
 
-            // 무급 일수 및 차감 예상액 디스플레이 업데이트
             const dispDays = document.getElementById('disp-unpaid-days');
             if (dispDays) {
                 dispDays.value = `${syncedUnpaidDays}일`;
@@ -2204,7 +2231,6 @@
                 try { config = { ...config, ...JSON.parse(saved) }; } catch (e) {}
             }
             
-            // 입사일 및 소급 상태 텍스트 동기화
             if (config.hireDate) {
                 document.getElementById('input-hire-date').value = config.hireDate;
                 document.getElementById('inp-hire-date').value = config.hireDate;
@@ -2245,7 +2271,6 @@
                 localStorage.removeItem('shift_day_memos');
                 dayMemos = {};
 
-                // 입력창 및 안내 박스 즉시 초기화
                 document.getElementById('input-hire-date').value = '';
                 document.getElementById('inp-hire-date').value = '';
                 const infoBox = document.getElementById('leave-calc-info-box');
@@ -2276,6 +2301,31 @@
                 if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 45) {
                     if (diffX < 0) changeMonth(1);
                     else changeMonth(-1);
+                }
+            }, { passive: true });
+        }
+
+        /* 총지급액 Hero 카드 좌/우 스와이프 제스처 리스너 */
+        function initSalarySwipe() {
+            const heroCard = document.getElementById('salary-hero-card');
+            if (!heroCard) return;
+
+            let startX = 0, startY = 0;
+
+            heroCard.addEventListener('touchstart', (e) => {
+                startX = e.changedTouches[0].screenX;
+                startY = e.changedTouches[0].screenY;
+            }, { passive: true });
+
+            heroCard.addEventListener('touchend', (e) => {
+                const diffX = e.changedTouches[0].screenX - startX;
+                const diffY = e.changedTouches[0].screenY - startY;
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+                    if (diffX < 0) {
+                        changePayMonth(1); // 왼쪽 스와이프: 다음달
+                    } else {
+                        changePayMonth(-1); // 오른쪽 스와이프: 이전달
+                    }
                 }
             }, { passive: true });
         }
@@ -2316,6 +2366,7 @@
             renderCalendar();
             syncFromCalendar();
             initCalendarSwipe();
+            initSalarySwipe(); // 급여 히어로 카드 스와이프 활성화
 
             checkPayslipPopup();
         };
