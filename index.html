@@ -900,7 +900,7 @@
                 </div>
             </div>
 
-            <!-- 총지급액 히어로 카드 -->
+            <!-- 총지급액 히어로 카드 (좌/우 스와이프 지원) -->
             <div class="salary-hero" id="salary-hero-card" title="좌우로 스와이프하여 이전/다음 달 급여 이동">
                 <div class="period-tag" id="pay-period-label">산정기간: 2026-08-16 ~ 2026-09-15</div>
                 <div class="hero-label">총 지급액 (세전 합계)</div>
@@ -1394,7 +1394,7 @@
         let selectedDateStr = null;
 
         let pickerDisplayYear = new Date().getFullYear();
-        let pickerTarget = 'calendar';
+        let pickerTarget = 'calendar'; // 'calendar' 또는 'payroll'
 
         let overrides = {};
         let dayMemos = {};
@@ -1577,7 +1577,7 @@
             updateLeaveStats();
         }
 
-        /* 캘린더 및 급여계산기 공용 연/월 선택 피커 모달 */
+        /* 캘린더 및 급여계산기 공용 연/월 선택 피커 모달 제어 */
         function openYearMonthPicker(target = 'calendar') {
             pickerTarget = target;
             document.getElementById('picker-title-text').innerText = (target === 'payroll') ? '💰 이동할 급여 월 선택' : '🗓️ 이동할 연도와 월 선택';
