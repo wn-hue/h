@@ -406,7 +406,7 @@
             padding-bottom: 8px;
         }
 
-        /* 총 지급액 히어로 카드 (스와이프 기능 탑재) */
+        /* 총 지급액 히어로 카드 */
         .salary-hero {
             background: linear-gradient(135deg, #1e293b, #0f172a);
             color: #ffffff;
@@ -884,7 +884,7 @@
             </div>
         </section>
 
-        <!-- 2. 급여 계산기 화면 (탭1 방식 탑바 & 피커 연동) -->
+        <!-- 2. 급여 계산기 화면 -->
         <section id="view-payroll" class="view-page">
             <div class="gcal-topbar">
                 <div class="month-title-nav">
@@ -900,7 +900,7 @@
                 </div>
             </div>
 
-            <!-- 총지급액 히어로 카드 (좌/우 스와이프 지원) -->
+            <!-- 총지급액 히어로 카드 -->
             <div class="salary-hero" id="salary-hero-card" title="좌우로 스와이프하여 이전/다음 달 급여 이동">
                 <div class="period-tag" id="pay-period-label">산정기간: 2026-08-16 ~ 2026-09-15</div>
                 <div class="hero-label">총 지급액 (세전 합계)</div>
@@ -1217,13 +1217,16 @@
         </div>
     </div>
 
-    <!-- 모달: 월 근무/휴무 통계 -->
+    <!-- 모달: 근무/휴무 통계 (급여 산정기간 기준으로 출력) -->
     <div class="modal-overlay" id="modal-month-stats" onclick="closeMonthStatsModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
-            <div class="modal-title">
-                <span id="stat-modal-title">📊 2026년 9월 근무 현황</span>
+            <div class="modal-title" style="margin-bottom:6px;">
+                <span id="stat-modal-title">📊 2026년 9월 근무 현황 (C조)</span>
                 <button style="border: none; background: none; font-size: 18px; color: #5f6368; cursor: pointer;" onclick="closeMonthStatsModalDirect()">✕</button>
             </div>
+            <!-- 급여 산정기간 안내 태그 -->
+            <div id="stat-modal-period" style="font-size:11.5px; color:var(--text-sub); margin-bottom:14px; font-weight:700; background:#f1f5f9; padding:5px 10px; border-radius:6px; display:inline-block;">산정기간: 2026-08-16 ~ 2026-09-15</div>
+            
             <div class="month-stat-grid">
                 <div class="month-stat-box">
                     <div class="title">주간 근무</div>
@@ -1392,11 +1395,10 @@
         let selectedDateStr = null;
 
         let pickerDisplayYear = new Date().getFullYear();
-        let pickerTarget = 'calendar'; // 'calendar' 또는 'payroll' 구분
+        let pickerTarget = 'calendar'; // 'calendar' 또는 'payroll'
 
         let overrides = {};
         let dayMemos = {};
-        let currentMonthStats = { day: 0, night: 0, special: 0, off: 0, leave: 0, totalWork: 0 };
         let syncedUnpaidDays = 0;
 
         let config = {
@@ -1517,8 +1519,6 @@
             const today = new Date();
             const todayStr = toDateKey(today.getFullYear(), today.getMonth(), today.getDate());
 
-            let counts = { day: 0, night: 0, special: 0, off: 0, leave: 0, totalWork: 0 };
-
             for (let i = firstDayIndex - 1; i >= 0; i--) {
                 const d = prevLastDate - i;
                 const cell = document.createElement('div');
@@ -1531,31 +1531,6 @@
                 const dateObj = new Date(year, month, d);
                 const dateStr = toDateKey(year, month, d);
                 const shift = getActualShift(dateObj, currentGroup);
-
-                if (shift.type === 'DAY' || (shift.type === 'NO_OT' && shift.origType !== 'NIGHT')) {
-                    counts.day++;
-                    counts.totalWork++;
-                } else if (shift.type === 'NIGHT' || (shift.type === 'NO_OT' && shift.origType === 'NIGHT')) {
-                    counts.night++;
-                    counts.totalWork++;
-                } else if (shift.type === 'SPECIAL_DAY' || shift.type === 'SPECIAL_NIGHT') {
-                    counts.special++;
-                    counts.totalWork++;
-                } else if (shift.type === 'OFF' || shift.type === 'UNPAID_OFF') {
-                    counts.off++;
-                } else if (shift.type === 'LEAVE') {
-                    counts.leave += 1.0;
-                } else if (shift.type === 'HALF_LEAVE') {
-                    counts.leave += 0.5;
-                    counts.totalWork += 0.5;
-                    if (shift.origType === 'NIGHT') counts.night += 0.5;
-                    else counts.day += 0.5;
-                } else if (shift.type === 'UNPAID_HALF') {
-                    counts.totalWork += 0.5;
-                    counts.off += 0.5;
-                    if (shift.origType === 'NIGHT') counts.night += 0.5;
-                    else counts.day += 0.5;
-                }
 
                 const cell = document.createElement('div');
                 let cellClasses = ['cal-day'];
@@ -1600,7 +1575,6 @@
                 grid.appendChild(cell);
             }
 
-            currentMonthStats = counts;
             updateLeaveStats();
         }
 
@@ -1682,16 +1656,60 @@
             syncFromCalendar();
         }
 
+        /* 탭1 근무 통계: 캘린더에서 보고 있는 달의 '급여 기준날짜(전월 16일 ~ 당월 15일)' 기준으로 정확히 집계 */
         function openMonthStatsModal() {
             const year = currentCalDate.getFullYear();
-            const month = currentCalDate.getMonth() + 1;
-            document.getElementById('stat-modal-title').innerText = `📊 ${year}년 ${month}월 근무 현황 (${currentGroup}조)`;
-            document.getElementById('modal-pill-day').innerText = `${currentMonthStats.day}일`;
-            document.getElementById('modal-pill-night').innerText = `${currentMonthStats.night}일`;
-            document.getElementById('modal-pill-special').innerText = `${currentMonthStats.special}일`;
-            document.getElementById('modal-pill-off').innerText = `${currentMonthStats.off}일`;
-            document.getElementById('modal-pill-leave').innerText = `${currentMonthStats.leave}일`;
-            document.getElementById('modal-pill-total-work').innerText = `${currentMonthStats.totalWork}일`;
+            const month = currentCalDate.getMonth();
+            const payMonthNum = month + 1;
+
+            const startDate = new Date(year, month - 1, 16);
+            const endDate = new Date(year, month, 15);
+            const startStr = toDateKey(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+            const endStr = toDateKey(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+
+            document.getElementById('stat-modal-title').innerText = `📊 ${year}년 ${payMonthNum}월 근무 현황 (${currentGroup}조)`;
+            const periodEl = document.getElementById('stat-modal-period');
+            if (periodEl) {
+                periodEl.innerText = `급여 산정기간: ${startStr} ~ ${endStr}`;
+            }
+
+            let counts = { day: 0, night: 0, special: 0, off: 0, leave: 0, totalWork: 0 };
+            let curr = new Date(startDate.getTime());
+            while (curr <= endDate) {
+                const shift = getActualShift(curr, currentGroup);
+                if (shift.type === 'DAY' || (shift.type === 'NO_OT' && shift.origType !== 'NIGHT')) {
+                    counts.day++;
+                    counts.totalWork++;
+                } else if (shift.type === 'NIGHT' || (shift.type === 'NO_OT' && shift.origType === 'NIGHT')) {
+                    counts.night++;
+                    counts.totalWork++;
+                } else if (shift.type === 'SPECIAL_DAY' || shift.type === 'SPECIAL_NIGHT') {
+                    counts.special++;
+                    counts.totalWork++;
+                } else if (shift.type === 'OFF' || shift.type === 'UNPAID_OFF') {
+                    counts.off++;
+                } else if (shift.type === 'LEAVE') {
+                    counts.leave += 1.0;
+                } else if (shift.type === 'HALF_LEAVE') {
+                    counts.leave += 0.5;
+                    counts.totalWork += 0.5;
+                    if (shift.origType === 'NIGHT') counts.night += 0.5;
+                    else counts.day += 0.5;
+                } else if (shift.type === 'UNPAID_HALF') {
+                    counts.totalWork += 0.5;
+                    counts.off += 0.5;
+                    if (shift.origType === 'NIGHT') counts.night += 0.5;
+                    else counts.day += 0.5;
+                }
+                curr.setDate(curr.getDate() + 1);
+            }
+
+            document.getElementById('modal-pill-day').innerText = `${counts.day}일`;
+            document.getElementById('modal-pill-night').innerText = `${counts.night}일`;
+            document.getElementById('modal-pill-special').innerText = `${counts.special}일`;
+            document.getElementById('modal-pill-off').innerText = `${counts.off}일`;
+            document.getElementById('modal-pill-leave').innerText = `${counts.leave}일`;
+            document.getElementById('modal-pill-total-work').innerText = `${counts.totalWork}일`;
 
             document.getElementById('modal-month-stats').classList.add('active');
         }
@@ -2038,9 +2056,9 @@
             const rawDutyPay = config.dutyPay;
             const rawSeniorityPay = config.seniorityPay;
 
-            const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
-            const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));
-            const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));
+            const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));[span_0](start_span)[span_0](end_span)
+            const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));[span_1](start_span)[span_1](end_span)
+            const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));[span_2](start_span)[span_2](end_span)
 
             const basicPay = Math.max(0, rawBasicPay - basicDeduction);
             const dutyPay = Math.max(0, rawDutyPay - dutyDeduction);
@@ -2115,7 +2133,7 @@
                 entryBonus = 0;
                 if (hasBonusCheck) {
                     const rawBonusPay = Math.round(rawBasicPay * 0.5) + rawSeniorityPay;
-                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));
+                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));[span_3](start_span)[span_3](end_span)
                     bonusPay = Math.max(0, rawBonusPay - bonusDeduction);
                     totalUnpaidDeduction += bonusDeduction;
 
@@ -2322,9 +2340,9 @@
                 const diffY = e.changedTouches[0].screenY - startY;
                 if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
                     if (diffX < 0) {
-                        changePayMonth(1); // 왼쪽 스와이프: 다음달
+                        changePayMonth(1);
                     } else {
-                        changePayMonth(-1); // 오른쪽 스와이프: 이전달
+                        changePayMonth(-1);
                     }
                 }
             }, { passive: true });
@@ -2366,7 +2384,7 @@
             renderCalendar();
             syncFromCalendar();
             initCalendarSwipe();
-            initSalarySwipe(); // 급여 히어로 카드 스와이프 활성화
+            initSalarySwipe();
 
             checkPayslipPopup();
         };
