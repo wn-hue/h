@@ -340,8 +340,11 @@
             border-radius: 4px;
             width: 95%;
             text-align: center;
-            letter-spacing: -0.2px;
+            letter-spacing: -0.5px;
             margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .shift-badge.day { background: var(--day-bg); color: var(--day-color); border: 1px solid #c2e7ff; }
@@ -356,6 +359,7 @@
 
         .shift-badge.special { background: var(--special-bg); color: var(--special-color); border: 1px solid #fed7aa; }
         .shift-badge.leave { background: var(--leave-bg); color: var(--leave-color); border: 1px solid #b7eb8f; }
+        .shift-badge.half { background: #e6f4ea; color: #0d652d; border: 1px solid #b7eb8f; }
         .shift-badge.no-ot { background: var(--no-ot-bg); color: var(--no-ot-color); border: 1px solid #fecaca; }
         .shift-badge.unpaid { background: #fee2e2; color: #b91c1c; }
         .shift-badge.unpaid-half { background: #ffedd5; color: #c2410c; border: 1px solid #fed7aa; }
@@ -1256,7 +1260,7 @@
         </div>
     </div>
 
-    <!-- 모달: 근태 및 메모 변경 -->
+    <!-- 모달: 근태 및 메모 변경 (반차 전/후 옵션 포함) -->
     <div class="modal-overlay" id="modal-override" onclick="closeModal(event)">
         <div class="modal-sheet" onclick="event.stopPropagation()">
             <div class="modal-title">
@@ -1287,17 +1291,17 @@
                     <span>🌴 연차</span>
                     <span style="font-size:10px; opacity:0.8;">-1일 (출근 면제)</span>
                 </button>
-                <button class="opt-btn half" onclick="setDayOverride('HALF_LEAVE')">
-                    <span>⏱️ 반차</span>
-                    <span style="font-size:10px; opacity:0.8;">-0.5일 (4h 근무, OT 제외)</span>
-                </button>
                 <button class="opt-btn no-ot" onclick="setDayOverride('NO_OT')">
                     <span>⏹️ O.T 해제</span>
                     <span style="font-size:10px; opacity:0.8;">정시퇴근 (2.5h OT 제외)</span>
                 </button>
-                <button class="opt-btn off" onclick="setDayOverride('FORCED_OFF')">
-                    <span>🛌 강제 휴무</span>
-                    <span style="font-size:10px; opacity:0.8;">비번/휴무 처리</span>
+                <button class="opt-btn half" onclick="setDayOverride('HALF_PRE')">
+                    <span>⏱️ 반차 (전)</span>
+                    <span style="font-size:10px; opacity:0.8;">-0.5일 · 잔업 O (2.5h)</span>
+                </button>
+                <button class="opt-btn half" onclick="setDayOverride('HALF_POST')">
+                    <span>⏱️ 반차 (후)</span>
+                    <span style="font-size:10px; opacity:0.8;">-0.5일 · 잔업 X (O.T해제)</span>
                 </button>
                 <button class="opt-btn unpaid" onclick="setDayOverride('UNPAID_OFF')">
                     <span>🚫 무급 휴무</span>
@@ -1306,6 +1310,10 @@
                 <button class="opt-btn unpaid-half" onclick="setDayOverride('UNPAID_HALF')">
                     <span>🌗 무급 반차</span>
                     <span style="font-size:10px; opacity:0.8;">4h 근무 (OT 제외)</span>
+                </button>
+                <button class="opt-btn off" onclick="setDayOverride('FORCED_OFF')">
+                    <span>🛌 강제 휴무</span>
+                    <span style="font-size:10px; opacity:0.8;">비번/휴무 처리</span>
                 </button>
                 <button class="opt-btn reset" onclick="setDayOverride(null)">
                     <span>🔄 기본 스케줄로 복구</span>
@@ -1394,7 +1402,7 @@
         let selectedDateStr = null;
 
         let pickerDisplayYear = new Date().getFullYear();
-        let pickerTarget = 'calendar'; // 'calendar' 또는 'payroll'
+        let pickerTarget = 'calendar';
 
         let overrides = {};
         let dayMemos = {};
@@ -1485,7 +1493,16 @@
                 if (ov === 'SPECIAL_DAY') return { type: 'SPECIAL_DAY', name: '주특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'SPECIAL_NIGHT') return { type: 'SPECIAL_NIGHT', name: '야특', isSpecial: true, hasOt: true, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'LEAVE') return { type: 'LEAVE', name: '연차', isLeave: true, leaveVal: 1.0, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
-                if (ov === 'HALF_LEAVE') return { type: 'HALF_LEAVE', name: '반차', isLeave: true, leaveVal: 0.5, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
+                
+                // 반차(전): 잔업 수행 (2.5h OT 지급)
+                if (ov === 'HALF_PRE') {
+                    return { type: 'HALF_PRE', name: '반차(전)', subName: '잔업 2.5h', isLeave: true, leaveVal: 0.5, hasOt: true, origType: base.type, holidayName: holiday ? holiday.name : '' };
+                }
+                // 반차(후): 잔업 미수행 (O.T 해제)
+                if (ov === 'HALF_POST' || ov === 'HALF_LEAVE') {
+                    return { type: 'HALF_POST', name: '반차(후)', subName: 'O.T해제', isLeave: true, leaveVal: 0.5, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
+                }
+
                 if (ov === 'NO_OT') return { type: 'NO_OT', name: base.type === 'NIGHT' ? '야간' : '주간', subName: 'O.T해제', isNoOt: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'UNPAID_OFF') return { type: 'UNPAID_OFF', name: '무급', isUnpaid: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
                 if (ov === 'UNPAID_HALF') return { type: 'UNPAID_HALF', name: '무반', isUnpaidHalf: true, hasOt: false, origType: base.type, holidayName: holiday ? holiday.name : '' };
@@ -1542,7 +1559,8 @@
                 if (shift.type === 'DAY') badgeClass = 'day';
                 else if (shift.type === 'NIGHT') badgeClass = 'night';
                 else if (shift.type === 'SPECIAL_DAY' || shift.type === 'SPECIAL_NIGHT') badgeClass = 'special';
-                else if (shift.type === 'LEAVE' || shift.type === 'HALF_LEAVE') badgeClass = 'leave';
+                else if (shift.type === 'LEAVE') badgeClass = 'leave';
+                else if (shift.type === 'HALF_PRE' || shift.type === 'HALF_POST') badgeClass = 'half';
                 else if (shift.type === 'NO_OT') badgeClass = 'no-ot';
                 else if (shift.type === 'UNPAID_OFF') badgeClass = 'unpaid';
                 else if (shift.type === 'UNPAID_HALF') badgeClass = 'unpaid-half';
@@ -1689,7 +1707,7 @@
                     counts.off++;
                 } else if (shift.type === 'LEAVE') {
                     counts.leave += 1.0;
-                } else if (shift.type === 'HALF_LEAVE') {
+                } else if (shift.type === 'HALF_PRE' || shift.type === 'HALF_POST') {
                     counts.leave += 0.5;
                     counts.totalWork += 0.5;
                     if (shift.origType === 'NIGHT') counts.night += 0.5;
@@ -1830,7 +1848,7 @@
             Object.entries(overrides).forEach(([dateStr, val]) => {
                 if (dateStr.startsWith(currentYearStr)) {
                     if (val === 'LEAVE') used += 1.0;
-                    else if (val === 'HALF_LEAVE') used += 0.5;
+                    else if (val === 'HALF_PRE' || val === 'HALF_POST' || val === 'HALF_LEAVE') used += 0.5;
                 }
             });
 
@@ -1979,6 +1997,7 @@
             syncFromCalendar();
         }
 
+        /* 캘린더 데이터 -> 급여 계산기 동기화 엔진 */
         function syncFromCalendar() {
             const year = currentPayDate.getFullYear();
             const month = currentPayDate.getMonth();
@@ -2009,10 +2028,15 @@
                     if (shift.origType === 'NIGHT') E3++;
                     else E2++;
                     noOtDays++;
-                } else if (shift.type === 'HALF_LEAVE') {
-                    if (shift.origType === 'NIGHT') E3 += 0.5;
-                    else E2 += 0.5;
-                    noOtDays += 0.5;
+                } else if (shift.type === 'HALF_PRE') {
+                    // 반차(전): 출근 인정(유급0.5+근무0.5), 잔업 정상 수행 -> noOtDays 증가 안함(2.5h OT 지급)
+                    if (shift.origType === 'NIGHT') E3++;
+                    else E2++;
+                } else if (shift.type === 'HALF_POST' || shift.type === 'HALF_LEAVE') {
+                    // 반차(후): 출근 인정(유급0.5+근무0.5), 잔업 미수행 -> noOtDays 1일 증가(O.T 해제)
+                    if (shift.origType === 'NIGHT') E3++;
+                    else E2++;
+                    noOtDays++;
                 } else if (shift.type === 'UNPAID_OFF') {
                     unpaidCount += 1.0;
                 } else if (shift.type === 'UNPAID_HALF') {
@@ -2036,7 +2060,7 @@
             calculatePayrollFromInputs();
         }
 
-        /* 오류가 완벽히 수정된 급여 계산 엔진 */
+        /* 급여 계산 엔진 */
         function calculatePayrollFromInputs() {
             const E2 = parseFloat(document.getElementById('inp-day-days').value) || 0;
             const E3 = parseFloat(document.getElementById('inp-night-days').value) || 0;
@@ -2055,7 +2079,7 @@
             const rawDutyPay = config.dutyPay;
             const rawSeniorityPay = config.seniorityPay;
 
-            // 1/27 공제 계산 (문법 오류 제거 완료)
+            // 무급 공제액 계산 (1/27 기준)[span_0](start_span)[span_0](end_span)
             const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
             const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));
             const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));
@@ -2133,7 +2157,7 @@
                 entryBonus = 0;
                 if (hasBonusCheck) {
                     const rawBonusPay = Math.round(rawBasicPay * 0.5) + rawSeniorityPay;
-                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));
+                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));[span_1](start_span)[span_1](end_span)
                     bonusPay = Math.max(0, rawBonusPay - bonusDeduction);
                     totalUnpaidDeduction += bonusDeduction;
 
