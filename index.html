@@ -2046,7 +2046,7 @@
                     else E2++;
                     noOtDays++;
                 } else if (shift.type === 'HALF_PRE') {
-                    // 유급 반차(전): 잔업 2.5h 정상 수행 -> noOtDays 증가 안 함(OT 1일분 인정)
+                    // 유급 반차(전): 잔업 2.5h 정상 수행 -> noOtDays 증가 안 함
                     if (shift.origType === 'NIGHT') E3++;
                     else E2++;
                 } else if (shift.type === 'HALF_POST' || shift.type === 'HALF_LEAVE') {
@@ -2060,17 +2060,17 @@
                     // 무급 반차(전): 0.5일 무급 차감, 잔업 2.5h 정상 수행
                     unpaidCount += 0.5;
                     if (shift.origType === 'NIGHT') {
-                        E3 += 0.5; // 야간수당 0.5일분(3.5h)
-                        E2 += 0.5; // OT 계산 시 풀 연장 1일분(2.5h)으로 반영
+                        E3 += 0.5; // 야간 4시간(3.5h) 수당
+                        E2 += 0.5; // OT 계산 시 1일분(2.5h) 충족
                     } else {
-                        E2 += 1.0; // OT 계산 시 풀 연장 1일분(2.5h)으로 반영
+                        E2 += 1.0;
                     }
                 } else if (shift.type === 'UNPAID_HALF_POST' || shift.type === 'UNPAID_HALF') {
                     // 무급 반차(후): 0.5일 무급 차감, 잔업 미수행 (O.T 해제)
                     unpaidCount += 0.5;
                     if (shift.origType === 'NIGHT') E3 += 0.5;
                     else E2 += 0.5;
-                    noOtDays += 0.5; // 연장수당 제외 (0.5 - 0.5 = 0h)
+                    noOtDays += 0.5;
                 }
                 curr.setDate(curr.getDate() + 1);
             }
@@ -2106,7 +2106,7 @@
             const rawDutyPay = config.dutyPay;
             const rawSeniorityPay = config.seniorityPay;
 
-            // 무급 공제액 계산 (1/27 기준, 반올림)[span_2](start_span)[span_2](end_span)
+            // 무급 공제액 계산 (1/27 기준, 반올림)[span_1](start_span)[span_1](end_span)
             const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
             const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));
             const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));
@@ -2184,7 +2184,7 @@
                 entryBonus = 0;
                 if (hasBonusCheck) {
                     const rawBonusPay = Math.round(rawBasicPay * 0.5) + rawSeniorityPay;
-                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));[span_3](start_span)[span_3](end_span)
+                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));[span_2](start_span)[span_2](end_span)
                     bonusPay = Math.max(0, rawBonusPay - bonusDeduction);
                     totalUnpaidDeduction += bonusDeduction;
 
