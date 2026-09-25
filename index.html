@@ -1658,10 +1658,12 @@
                 btn.onclick = () => {
                     if (pickerTarget === 'payroll') {
                         currentPayDate = new Date(pickerDisplayYear, m, 1);
+                        currentCalDate = new Date(pickerDisplayYear, m, 1);
                         closeYearMonthPickerDirect();
                         syncFromCalendar();
                     } else {
                         currentCalDate = new Date(pickerDisplayYear, m, 1);
+                        currentPayDate = new Date(pickerDisplayYear, m, 1);
                         closeYearMonthPickerDirect();
                         renderCalendar();
                     }
@@ -1672,13 +1674,12 @@
 
         function jumpPickerToToday() {
             const today = new Date();
+            currentPayDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            currentCalDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            closeYearMonthPickerDirect();
             if (pickerTarget === 'payroll') {
-                currentPayDate = new Date(today.getFullYear(), today.getMonth(), 1);
-                closeYearMonthPickerDirect();
                 syncFromCalendar();
             } else {
-                currentCalDate = new Date(today.getFullYear(), today.getMonth(), 1);
-                closeYearMonthPickerDirect();
                 renderCalendar();
                 goToToday();
             }
@@ -1687,6 +1688,7 @@
         function goToPayToday() {
             const today = new Date();
             currentPayDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            currentCalDate = new Date(today.getFullYear(), today.getMonth(), 1);
             syncFromCalendar();
         }
 
@@ -1759,6 +1761,7 @@
         function goToToday() {
             const today = new Date();
             currentCalDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            currentPayDate = new Date(today.getFullYear(), today.getMonth(), 1);
             switchView('calendar');
             setTimeout(() => {
                 const todayCell = document.querySelector('.cal-day.today');
@@ -1776,8 +1779,11 @@
         }
 
         function changeMonth(delta) {
+            currentCalDate.setDate(1);
             currentCalDate.setMonth(currentCalDate.getMonth() + delta);
+            currentPayDate = new Date(currentCalDate.getFullYear(), currentCalDate.getMonth(), 1);
             renderCalendar();
+            syncFromCalendar();
         }
 
         function setGroup(grp) {
@@ -2010,7 +2016,9 @@
         }
 
         function changePayMonth(delta) {
+            currentPayDate.setDate(1);
             currentPayDate.setMonth(currentPayDate.getMonth() + delta);
+            currentCalDate = new Date(currentPayDate.getFullYear(), currentPayDate.getMonth(), 1);
             syncFromCalendar();
         }
 
@@ -2060,8 +2068,8 @@
                     // 무급 반차(전): 0.5일 무급 차감, 잔업 2.5h 정상 수행
                     unpaidCount += 0.5;
                     if (shift.origType === 'NIGHT') {
-                        E3 += 0.5; // 야간 4시간(3.5h) 수당
-                        E2 += 0.5; // OT 계산 시 1일분(2.5h) 충족
+                        E3 += 0.5;
+                        E2 += 0.5;
                     } else {
                         E2 += 1.0;
                     }
@@ -2087,7 +2095,7 @@
             calculatePayrollFromInputs();
         }
 
-        /* 급여 계산 엔진 */
+        /* 급여 계산 엔진 (문법 에러 완벽 제거) */
         function calculatePayrollFromInputs() {
             const E2 = parseFloat(document.getElementById('inp-day-days').value) || 0;
             const E3 = parseFloat(document.getElementById('inp-night-days').value) || 0;
@@ -2106,7 +2114,7 @@
             const rawDutyPay = config.dutyPay;
             const rawSeniorityPay = config.seniorityPay;
 
-            // 무급 공제액 계산 (1/27 기준, 반올림)[span_1](start_span)[span_1](end_span)
+            // 1/27 공제 계산 (반올림)
             const basicDeduction = Math.round(rawBasicPay * (syncedUnpaidDays / 27));
             const dutyDeduction = Math.round(rawDutyPay * (syncedUnpaidDays / 27));
             const seniorityDeduction = Math.round(rawSeniorityPay * (syncedUnpaidDays / 27));
@@ -2184,7 +2192,7 @@
                 entryBonus = 0;
                 if (hasBonusCheck) {
                     const rawBonusPay = Math.round(rawBasicPay * 0.5) + rawSeniorityPay;
-                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));[span_2](start_span)[span_2](end_span)
+                    const bonusDeduction = Math.round(rawBonusPay * (syncedUnpaidDays / 27));
                     bonusPay = Math.max(0, rawBonusPay - bonusDeduction);
                     totalUnpaidDeduction += bonusDeduction;
 
@@ -2410,6 +2418,8 @@
                 renderCalendar();
             } else if (viewName === 'payroll') {
                 document.getElementById('bnav-pay').classList.add('active');
+                // 캘린더에서 보고 있던 연/월을 급여 계산기에 즉시 동기화
+                currentPayDate = new Date(currentCalDate.getFullYear(), currentCalDate.getMonth(), 1);
                 syncFromCalendar();
             } else if (viewName === 'leave') {
                 document.getElementById('bnav-leave').classList.add('active');
